@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="EV:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/EV_jar</output-path>
+    <root id="archive" name="EV.jar">
+      <element id="module-output" name="EV" />
+      <element id="library" level="project" name="json-simple-2.1.2" />
+      <element id="library" level="project" name="gson-2.2.2" />
+    </root>
+  </artifact>
+</component>

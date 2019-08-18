@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <padding>
+      <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+   </padding>
+   <bottom>
+      <Pane nodeOrientation="RIGHT_TO_LEFT" BorderPane.alignment="CENTER_RIGHT">
+         <children>
+            <fx:include source="../customfx/button_next.fxml" />
+         </children>
+      </Pane>
+   </bottom>
+   <center>
+      <HBox alignment="CENTER" style="-fx-background-color: #bfecbf; -fx-background-radius: 20;" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="CENTER" spacing="50.0" BorderPane.alignment="CENTER">
+               <children>
+                  <ImageView fx:id="userImage" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
+                     <image>
+                        <Image url="@../../../../resources/image.jpg" />
+                     </image>
+                  </ImageView>
+                  <GridPane maxHeight="400.0" minWidth="2.0" BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints vgrow="SOMETIMES" />
+                      <RowConstraints vgrow="SOMETIMES" />
+                      <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label text="first name" />
+                        <Label text="last name" GridPane.rowIndex="1" />
+                        <Label text="other name" GridPane.rowIndex="2" />
+                        <Label text="gender" GridPane.rowIndex="3" />
+                        <Label text="state" GridPane.rowIndex="4" />
+                        <Label text="town" GridPane.rowIndex="5" />
+                        <Label fx:id="name" text="Label" GridPane.columnIndex="1" />
+                        <Label fx:id="surname" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label fx:id="othername" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label fx:id="gender" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label fx:id="state" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label fx:id="town" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                     </children>
+                  </GridPane>
+               </children>
+            </HBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="20.0" right="20.0" top="20.0" />
+         </BorderPane.margin>
+      </HBox>
+   </center>
+   <top>
+      <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" BorderPane.alignment="TOP_LEFT">
+         <viewport>
+            <Rectangle2D />
+         </viewport>
+         <image>
+            <Image url="@../../../../resources/logo.png" />
+         </image>
+      </ImageView>
+   </top>
+</BorderPane>

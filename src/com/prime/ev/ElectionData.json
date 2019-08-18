@@ -1,0 +1,36 @@
+[
+  {
+    "title": "Presidential",
+    "parties": [
+      "PDP", "APC"
+    ],
+    "criteria": {
+      "state": "Anambra"
+    }
+  },
+  {
+    "title": "Senatorial",
+    "parties": [
+      "PDP", "APC", "PPY", "MME"
+    ],
+    "criteria": {}
+  },
+  {
+    "title": "Strongest Villain",
+    "parties": [
+      "Venom", "Juggernaut", "Magneto", "Galactus", "Thanos", "Loki", "Ultron", "Scarlet Witch", "Dr Dooom"
+    ],
+    "criteria": {
+      "state": "Anambra"
+    }
+  },
+  {
+    "title": "New Name",
+    "parties": [
+      "god", "destroyer", "Prime", "Unbreakable", "The one above all", "Thanos Slayer"
+    ],
+    "criteria": {
+      "age": "18,29"
+    }
+  }
+]
