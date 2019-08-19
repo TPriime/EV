@@ -3,8 +3,8 @@
     <output-path>$PROJECT_DIR$/out/artifacts/EV_jar</output-path>
     <root id="archive" name="EV.jar">
       <element id="module-output" name="EV" />
-      <element id="library" level="project" name="json-simple-2.1.2" />
-      <element id="library" level="project" name="gson-2.2.2" />
+      <element id="extracted-dir" path="$USER_HOME$/Desktop/gson-2.2.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Documents/bluestacks/json-simple-2.1.2.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

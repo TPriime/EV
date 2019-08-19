@@ -6,6 +6,8 @@ import org.json.simple.parser.JSONParser;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.util.stream.Collectors;
 
 public class Factory {
@@ -15,8 +17,10 @@ public class Factory {
 
     static {
         try{
-            factoryObject = (JSONObject) new JSONParser().parse(
-                    new FileReader(Factory.class.getResource(PROPERTY_FILE).getFile()));
+            //Factory.class.getResource(PROPERTY_FILE+"dvdv").getFile();
+            factoryObject = (JSONObject) new JSONParser()
+                    .parse(new BufferedReader(new InputStreamReader(Factory.class.getResourceAsStream(PROPERTY_FILE)))
+                            .lines().collect(Collectors.joining()));
         } catch(Exception e){
             e.printStackTrace();
         }
@@ -40,16 +44,17 @@ public class Factory {
         }catch(Exception e){
             e.printStackTrace();
         }
-        FileReader fReader = new FileReader(Factory.class.getResource("ElectionData.json").getFile());
-        return new BufferedReader(fReader).lines().collect(Collectors.joining());
+
+        return new BufferedReader(new InputStreamReader(Factory.class.getResourceAsStream("ElectionData.json")))
+                .lines().collect(Collectors.joining());
     }
 
 
 
     public static String fetchUserData() throws FileNotFoundException {
         try{Thread.sleep(1000);}catch (Exception e){}
-        FileReader fReader = new FileReader(Factory.class.getResource("UserData.json").getFile());
-        return new BufferedReader(fReader).lines().collect(Collectors.joining());
+        return new BufferedReader(new InputStreamReader(Factory.class.getResourceAsStream("UserData.json")))
+                .lines().collect(Collectors.joining());
     }
 
 

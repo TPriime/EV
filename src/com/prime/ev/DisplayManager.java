@@ -32,7 +32,7 @@ public class DisplayManager {
     private static ArrayList<Scene> sceneList;
     private final String SCENE_NAME_FORMAT = "scene/scene";
 
-    private final int DELAY_MILLIS = 5000;
+    private final int DELAY_MILLIS = 1000;
     private final SceneFunction sceneFunction;
     public static int addedScenes = -1;
 
