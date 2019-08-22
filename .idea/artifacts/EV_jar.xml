@@ -5,6 +5,7 @@
       <element id="module-output" name="EV" />
       <element id="extracted-dir" path="$USER_HOME$/Desktop/gson-2.2.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/Documents/bluestacks/json-simple-2.1.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Desktop/nv-websocket-client-2.5.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

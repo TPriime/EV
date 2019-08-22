@@ -1,6 +1,7 @@
 .root {
-    -fx-background-color: #8fbc8f;
-    /*-fx-background-color: #2A802A*/;
+    /*-fx-background-color: #8fbc8f;*/
+    /*-fx-background-color: #2A802A;*/
+    -fx-background-color: white;
 }
 
 .label {
@@ -10,11 +11,15 @@
 
 
 .button {
+    /*@debug*/
+    -fx-padding: 17px;
+    -fx-background-color: #2A9310;
+
     -fx-font-weight: bold;
-    -fx-font-size: 20px;
+    -fx-font-size: 30px;
     -fx-text-fill: white;
-    -fx-background-radius: 15px;
-    -fx-background-color: hsb(50, 10%, 30%);
+    -fx-background-radius: 38%;
+    /*-fx-background-color: hsb(50, 10%, 30%);*/
 }
 
 .text-field {

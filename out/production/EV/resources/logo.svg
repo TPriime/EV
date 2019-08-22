@@ -1,5 +1,5 @@
 <svg height="400" width="400">
-    <circle cx="200" cy="185" r="130" stroke="black" stroke-width="3" fill="#afa" />
+    <circle cx="200" cy="185" r="130" stroke="black" stroke-width="3" fill="white" />
     <polyline points="250,110 250,100 150,100 200,150 150,270 250,270 250,250" stroke="green" fill="none" stroke-width="13"/>
     <polyline points="210,160 240,190 340,120" stroke="red" fill="none" stroke-width="10"/>
 </svg>

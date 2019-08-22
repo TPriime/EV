@@ -311,7 +311,7 @@ public class DisplayManager {
                 new Thread(()->{
                     try{
                         sceneFunction.fetchElectionBundle();
-                        sceneFunction.showStartOption();
+                        sceneFunction.showStartStatus(sceneFunction.createSocketConnection());
                     }
                     catch(Exception e){e.printStackTrace();}
                 }, "Fetch Election Resource").start();
