@@ -19,16 +19,16 @@
       </Pane>
    </bottom>
    <center>
-      <HBox alignment="CENTER" style="-fx-background-color: #bfecbf; -fx-background-radius: 20;" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER" style="-fx-background-radius: 20;" BorderPane.alignment="CENTER">
          <children>
-            <HBox alignment="CENTER" spacing="50.0" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER" spacing="100.0" BorderPane.alignment="CENTER">
                <children>
                   <ImageView fx:id="userImage" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
                      <image>
                         <Image url="@../../../../resources/image.jpg" />
                      </image>
                   </ImageView>
-                  <GridPane maxHeight="400.0" minWidth="2.0" BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS">
+                  <GridPane maxHeight="400.0" minWidth="2.0" styleClass="user-details" BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0" />
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" />
@@ -42,12 +42,12 @@
                         <RowConstraints vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="first name" />
-                        <Label text="last name" GridPane.rowIndex="1" />
-                        <Label text="other name" GridPane.rowIndex="2" />
-                        <Label text="gender" GridPane.rowIndex="3" />
-                        <Label text="state" GridPane.rowIndex="4" />
-                        <Label text="town" GridPane.rowIndex="5" />
+                        <Label text="First Name" />
+                        <Label text="Last Name" GridPane.rowIndex="1" />
+                        <Label text="Other" GridPane.rowIndex="2" />
+                        <Label text="Gender" GridPane.rowIndex="3" />
+                        <Label text="State" GridPane.rowIndex="4" />
+                        <Label text="Town" GridPane.rowIndex="5" />
                         <Label fx:id="name" text="Label" GridPane.columnIndex="1" />
                         <Label fx:id="surname" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label fx:id="othername" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />

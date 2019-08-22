@@ -14,7 +14,7 @@
    <center>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="50.0" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="250.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../../resources/logo.png" />
                </image>
@@ -28,6 +28,9 @@
                   </Label>
                   <Button fx:id="retryButton" mnemonicParsing="false" text="Retry" visible="false" />
                </children>
+               <padding>
+                  <Insets bottom="100.0" />
+               </padding>
             </StackPane>
          </children>
       </VBox>

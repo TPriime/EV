@@ -18,6 +18,9 @@
          <font>
             <Font name="Serif Regular" size="24.0" />
          </font>
+         <padding>
+            <Insets bottom="200.0" />
+         </padding>
       </Label>
    </bottom>
    <padding>

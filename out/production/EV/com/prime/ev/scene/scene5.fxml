@@ -36,6 +36,6 @@
       </StackPane>
    </bottom>
    <top>
-      <Label fx:id="electionTitle" text="Title" BorderPane.alignment="CENTER" />
+      <Label fx:id="electionTitle" styleClass="title" text="Title" BorderPane.alignment="CENTER" />
    </top>
 </BorderPane>

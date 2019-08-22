@@ -15,9 +15,12 @@
       <StackPane>
          <children>
             <ProgressIndicator fx:id="loadingNode" progress="0.0" BorderPane.alignment="CENTER" />
-            <Button fx:id="loadedNode" mnemonicParsing="false" onAction="#nextScreen" text="Start" visible="false" />
-            <Button fx:id="serverRetryButton" mnemonicParsing="false" text="Retry" visible="false" />
+            <Button fx:id="loadedNode" minWidth="-Infinity" mnemonicParsing="false" onAction="#nextScreen" prefWidth="110.0" text="Start" visible="false" />
+            <Button fx:id="serverRetryButton" minWidth="-Infinity" mnemonicParsing="false" prefWidth="110.0" text="Retry" visible="false" />
          </children>
+         <padding>
+            <Insets bottom="160.0" />
+         </padding>
       </StackPane>
    </bottom>
    <padding>

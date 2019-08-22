@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.control.Button?>
 
 
-<Button mnemonicParsing="false" onAction="#nextScene" text="next" xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prime.ev.customfx.CustomButtonController" />
+<Button minWidth="-Infinity" mnemonicParsing="false" onAction="#nextScene" prefWidth="110.0" text="Next" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prime.ev.customfx.CustomButtonController" />

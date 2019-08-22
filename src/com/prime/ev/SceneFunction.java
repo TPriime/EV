@@ -151,7 +151,7 @@ public class SceneFunction {
             DisplayAccessor.getCurrentScene().lookup("#serverRetryButton").setVisible(false);
             DisplayAccessor.getCurrentScene().lookup("#loadingNode").setVisible(false);
             new Thread(()->{
-                try{Thread.sleep((long)(DisplayAccessor.getDelay()*0.5));}catch(Exception e){e.printStackTrace();}
+                try{Thread.sleep((long)(DisplayAccessor.getDelay()*0.35));}catch(Exception e){e.printStackTrace();}
                 DisplayAccessor.getCurrentScene().lookup("#loadedNode").setVisible(true);
             }, "Fancy start delay").start();
         });

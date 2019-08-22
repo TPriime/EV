@@ -32,7 +32,7 @@ public class DisplayManager {
     private static ArrayList<Scene> sceneList;
     private final String SCENE_NAME_FORMAT = "scene/scene";
 
-    protected final int DELAY_MILLIS = 1000;
+    protected final int DELAY_MILLIS = 2000;
     private final SceneFunction sceneFunction;
     public static int addedScenes = -1;
 
@@ -92,7 +92,7 @@ public class DisplayManager {
 
         userDetails.forEach((data, value)->{
             try{
-                ((Label) scene4.lookup("#"+data)).setText(": "+value);
+                ((Label) scene4.lookup("#"+data)).setText(":    "+value);
             }catch(NullPointerException npe){
                 System.out.println("no "+data+" field found on scene");
             }
