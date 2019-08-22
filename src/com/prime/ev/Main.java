@@ -1,9 +1,12 @@
 package com.prime.ev;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 
 public class Main extends Application {
@@ -21,6 +24,11 @@ public class Main extends Application {
         primaryStage.setScene(firstScene);
         displayAccessor = new DisplayAccessor(primaryStage);
         primaryStage.show();
+        primaryStage.setOnCloseRequest(windowEvent->{
+            System.out.println("\nshutting down...");
+            Platform.exit();
+            System.exit(0);
+        });
     }
 
 

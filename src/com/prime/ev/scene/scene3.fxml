@@ -19,11 +19,16 @@
                   <Image url="@../../../../resources/logo.png" />
                </image>
             </ImageView>
-            <Label text="Insert your card">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </Label>
+            <StackPane>
+               <children>
+                  <Label fx:id="prompt" text="Insert your card">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Label>
+                  <Button fx:id="retryButton" mnemonicParsing="false" text="Retry" visible="false" />
+               </children>
+            </StackPane>
          </children>
       </VBox>
    </center>

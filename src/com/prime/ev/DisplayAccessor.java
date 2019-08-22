@@ -3,6 +3,8 @@ package com.prime.ev;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class DisplayAccessor {
     private static DisplayManager displayManager;
     public static final int SCREEN_WIDTH =  1280;
@@ -17,6 +19,7 @@ public class DisplayAccessor {
     public static final int FINAL_VOTE_BEGIN_SCENE = 3;
 
 
+
     protected DisplayAccessor(Stage primaryStage) throws Exception{
         displayManager = new DisplayManager(primaryStage);
     }
@@ -27,4 +30,10 @@ public class DisplayAccessor {
     public static int indexOfScene(Scene scene) {return displayManager.indexOfScene(scene);}
     public static void setScene(int sceneConstant){ displayManager.setScene(sceneConstant);}
     public static Scene getCurrentScene() {return displayManager.getCurrentScene();}
+    public static void invokeSceneFunction(int sceneIndex) throws IOException {displayManager.invokeSceneFunction(sceneIndex);}
+    public static void invokeRootFunction(int rootIndex) {displayManager.invokeRootFunction(rootIndex);}
+
+
+    public static boolean inFinalScenes() {return displayManager.inFinalScenes;}
+    public static long getDelay() {return displayManager.DELAY_MILLIS;}
 }

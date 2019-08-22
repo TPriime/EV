@@ -30,19 +30,32 @@ public class Factory {
     static final String WS_SERVER = "ws://127.0.0.1:8080";
     static final String ELECTION_DATA_API = SERVER + "/api/election_data";
 
-    private static final long MAX_CONNECTION_DELAY_MILLIS = 30000;
+    static final int SERVER_DOWN = 0;
+    static final int FETCH_ERROR = 1;
+    static final int NO_FETCH = 2;
+    static final int USER_FETCH_ERROR = 3;
+
+    private static final long MAX_CONNECTION_DELAY_MILLIS = 3000;
+    private static final String VOTE_LOG_PATH = "vote_log.txt";
 
     private static WebSocket webSocket;
+    private static PrintWriter voteLogger;
 
     static {
         try{
             factoryObject = (JSONObject) new JSONParser()
                     .parse(new BufferedReader(new InputStreamReader(Factory.class.getResourceAsStream(PROPERTY_FILE)))
                             .lines().collect(Collectors.joining()));
-        } catch(Exception e){
-            e.printStackTrace();
-        }
+        } catch(Exception e){ e.printStackTrace(); }
+
+        File file = new File(VOTE_LOG_PATH);
+        try {
+            voteLogger = new PrintWriter(new FileWriter(
+                    file, true)
+                    , true);
+        } catch(IOException ioe){ ioe.printStackTrace(); }
     }
+
 
 
     public static String getProperty(String property) {
@@ -74,37 +87,40 @@ public class Factory {
                 /*@debug*/System.out.println("no server response");
             }
         } catch (ConnectException ce){ ce.printStackTrace();}
-        /*@debug*/Platform.exit();
-        return defaultServerResponse();
+
+        return null;
     }
 
-
+/*
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     public static String defaultServerResponse(){
         System.out.println("couldn't reach server");
         return new BufferedReader(new InputStreamReader(Factory.class.getResourceAsStream("ElectionData.json")))
                 .lines().collect(Collectors.joining());
-    }
+    }*/
 
 
 
     public static boolean createSocketConnection() throws WebSocketException, IOException{
-        webSocket = new MWebSocket(WS_SERVER, new WebSocketAdapter(){
+         MWebSocket connector = new MWebSocket(WS_SERVER, new WebSocketAdapter(){
             @Override public void onTextMessage(WebSocket webSocket, String message){
                 incomingMessage(message);
             }
-        }).connect();
+        });
+        webSocket = connector.connect();
 
         //reconnect
         new Thread(()->{
             while(true) {
                 try {
-                    Thread.sleep(200);
-                    if (!webSocket.isOpen())
-                        webSocket.recreate();
-                } catch(Exception e){e.printStackTrace();}
+                    Thread.sleep(500);
+                    if (!webSocket.isOpen()) {
+                        webSocket = connector.connect();
+                    }
+                } catch(Exception e){System.out.println("reconnecting...");}
             }
-        }, "Socket Reconnection Thread").start();
+        }, "My Socket Reconnection Thread").start();
+
         if(webSocket.isOpen()) return true;
         else return false;
     }
@@ -142,14 +158,11 @@ public class Factory {
 
 
 
-    public static String fetchUserData() throws FileNotFoundException {
-        try{Thread.sleep(1000);}catch (Exception e){}
-        /*return new BufferedReader(new InputStreamReader(Factory.class.getResourceAsStream("UserData.json")))
-                .lines().collect(Collectors.joining());
-        */
+    public static String fetchUserData() {
+        try{Thread.sleep(1000);}catch (Exception e){}/////////////////////
 
         System.out.println("fetching user data");
-        String response = awaitResponse(new MessageIntent("GET", "USER_DATA", null, null), MAX_CONNECTION_DELAY_MILLIS);
+        String response = awaitResponse(new MessageIntent("GET", "USER_DATA", null, ""), MAX_CONNECTION_DELAY_MILLIS);
         return response;
     }
 
@@ -173,9 +186,10 @@ public class Factory {
     }
 
 
-    public static void sendAndRecordVote(String voteInstance){
-        //nothing for now
-        MessageIntent voteIntent = new MessageIntent();
+    public static void sendAndRecordVote(VoteData voteInstance){
+        recordVote(voteInstance);  //log vote
+        MessageIntent voteIntent = new MessageIntent("POST", "vote_data", null, voteInstance);
+        sendMessage(voteIntent);
     }
 
 
@@ -184,5 +198,9 @@ public class Factory {
         while(true){
             if(System.currentTimeMillis()-startTime >= millis) return;
         }
+    }
+
+    private static void recordVote(VoteData voteData){
+        voteLogger.printf("\n\n%d: \n%s", 100, new Gson().toJson(voteData));
     }
 }

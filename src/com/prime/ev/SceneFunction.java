@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -43,16 +44,31 @@ public class SceneFunction {
 
 
 
-    protected void fetchUserDetails() throws FileNotFoundException{
+    protected boolean fetchUserDetails() throws FileNotFoundException{
         //wait until card is inserted
+        Platform.runLater(()-> ((Label) DisplayAccessor.getCurrentScene().lookup("#prompt"))
+                .setText("insert your card"));
+        try{Thread.sleep(2000);} catch(Exception e){e.printStackTrace();}
+
+
+        //set visibility
+        Platform.runLater(()->{
+            ((Label) DisplayAccessor.getCurrentScene().lookup("#prompt"))
+                    .setText("fetching details...");
+            DisplayAccessor.getCurrentScene().lookup("#prompt").setVisible(true);
+            DisplayAccessor.getCurrentScene().lookup("#retryButton").setVisible(false);
+        });
+
         String rawServerResponse = Factory.fetchUserData(/*id*/);  //long blocking operation
         if(rawServerResponse==null) {
-            connectionTimeOut(); return;
+            connectionTimeOut(Factory.USER_FETCH_ERROR); return false;
         }
 
         MessageIntent msi = new Gson().fromJson(rawServerResponse, MessageIntent.class);
         currentRawUserData = new Gson().toJson(msi.body);
         currentUserData = new Gson().fromJson(currentRawUserData, UserData.class);
+
+        return true;
     }
 
 
@@ -81,6 +97,7 @@ public class SceneFunction {
         Gson gson = new Gson();
         Type arrayListType = new TypeToken<ArrayList<ElectionData>>(){}.getType();
         electionBundle = gson.fromJson(Factory.fetchElectionData(), arrayListType);
+        if(electionBundle == null) connectionTimeOut(Factory.FETCH_ERROR);
     }
 
 
@@ -89,7 +106,7 @@ public class SceneFunction {
         long startTime = System.currentTimeMillis();
         while(!Factory.createSocketConnection()){
             if((System.currentTimeMillis()-startTime) > MAX_CONNECTION_DELAY_MILLIS) {
-                connectionTimeOut();
+                ///////////////////////////////////////////////connectionTimeOut(Factory.SERVER_DOWN);
                 return false;
             }
         };
@@ -97,26 +114,65 @@ public class SceneFunction {
     }
 
 
-    private void connectionTimeOut(/*String cause*/) {
+    private void connectionTimeOut(int cause) {
+        System.out.println("\n\nconnection timeout fetching user data");
+        final String message[] = new String[1];
+        switch(cause){
+            case Factory.SERVER_DOWN: message[0] = "Servers are currently down";
+                break;
+            case Factory.FETCH_ERROR: message[0] = "Couldn't fetch election data";
+                break;
+            case Factory.NO_FETCH: message[0] = "No available elections";
+                break;
+            case Factory.USER_FETCH_ERROR: showUserDetailRetryOption();
+                break;
+        }
+
+        if(message[0]!=null) Platform.runLater(()->{
+            ((Label) DisplayAccessor.getCurrentScene().lookup("#fetchMessage"))
+                    .setText(message[0]);
+            Button retryButton = ((Button) DisplayAccessor.getCurrentScene().lookup("#serverRetryButton"));
+            retryButton.setVisible(true);
+            retryButton.setOnAction(e->DisplayAccessor.invokeRootFunction(DisplayAccessor.FETCH_RESOURCES_ROOT));
+        });
 
     }
 
 
     public void showStartStatus(boolean connected){
         if(connected) showStartOption();
-        else showRetryOption();
+        else connectionTimeOut(Factory.SERVER_DOWN);;
     }
 
     private void showStartOption(){
         Platform.runLater(()->{
+            ((Label) DisplayAccessor.getCurrentScene().lookup("#fetchMessage"))
+                    .setText("Election resources fetched");
+            DisplayAccessor.getCurrentScene().lookup("#serverRetryButton").setVisible(false);
             DisplayAccessor.getCurrentScene().lookup("#loadingNode").setVisible(false);
-            DisplayAccessor.getCurrentScene().lookup("#loadedNode").setVisible(true);
+            new Thread(()->{
+                try{Thread.sleep((long)(DisplayAccessor.getDelay()*0.5));}catch(Exception e){e.printStackTrace();}
+                DisplayAccessor.getCurrentScene().lookup("#loadedNode").setVisible(true);
+            }, "Fancy start delay").start();
         });
     }
 
-    private void showRetryOption(){
+
+    public void setElectionBundle(ArrayList<ElectionData> electionBundle) {
+        this.electionBundle = electionBundle;
+    }
+
+    private void showUserDetailRetryOption(){
         Platform.runLater(()->{
-           //show restart button, say somethings
+            DisplayAccessor.getCurrentScene().lookup("#prompt").setVisible(false);
+            Button retryButton = (Button) (DisplayAccessor.getCurrentScene().lookup("#retryButton"));
+            retryButton.setVisible(true);
+            int action = DisplayAccessor.inFinalScenes() ? DisplayAccessor.ANOTHER_NEW_VOTER_SCENE
+                    : DisplayAccessor.NEW_VOTER_SCENE;
+            retryButton.setOnAction(e->{
+                try{DisplayAccessor.invokeSceneFunction(action);}
+                catch(IOException ioe){ioe.printStackTrace();}
+            });
         });
     }
 
@@ -140,10 +196,11 @@ public class SceneFunction {
                     voteMap.put(electionTitle,votedParty);
                 }
             }));
-        Gson gson = new Gson();
+        /*Gson gson = new Gson();
         String voteInstance = gson.toJson(new VoteData(currentUserData.id,voteMap));
+        */
 
-        Factory.sendAndRecordVote(voteInstance);
+        Factory.sendAndRecordVote(new VoteData(currentUserData.id,voteMap));
 
         new Thread(()->{
             try{Thread.sleep(2000);}catch(Exception e){}
@@ -157,6 +214,6 @@ public class SceneFunction {
         new Thread(()->{
             try{Thread.sleep(2000);}catch(Exception e){}
             DisplayAccessor.setScene(DisplayAccessor.ANOTHER_NEW_VOTER_SCENE);
-        }).start();
+        }, "New Vote").start();
     }
 }

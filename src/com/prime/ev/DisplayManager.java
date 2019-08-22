@@ -32,11 +32,11 @@ public class DisplayManager {
     private static ArrayList<Scene> sceneList;
     private final String SCENE_NAME_FORMAT = "scene/scene";
 
-    private final int DELAY_MILLIS = 1000;
+    protected final int DELAY_MILLIS = 1000;
     private final SceneFunction sceneFunction;
     public static int addedScenes = -1;
 
-    private boolean inFinalScenes = false;
+    protected boolean inFinalScenes = false;
 
     DisplayManager(Stage primaryStage) throws  Exception{
         this.primaryStage = primaryStage;
@@ -189,7 +189,7 @@ public class DisplayManager {
                     setRoot(fxml_url, i);
                 }
             } catch(Exception e){ e.printStackTrace(); }
-        }).start();
+        }, "Play Scenes").start();
     }
 
 
@@ -259,7 +259,7 @@ public class DisplayManager {
     }
 
 
-    private void invokeSceneFunction(int sceneIndex) throws IOException{
+    protected void invokeSceneFunction(int sceneIndex) throws IOException{
         /*@debug*/System.out.println("\ninvoked scene function with index: "+sceneIndex);
 
         if(inFinalScenes){
@@ -273,7 +273,7 @@ public class DisplayManager {
             case DisplayAccessor.ANOTHER_NEW_VOTER_SCENE:
                 if(!inFinalScenes) break;
                 new Thread(()->{ try {
-                    sceneFunction.fetchUserDetails();
+                    if(!sceneFunction.fetchUserDetails()) return; //loop till it returns true
                     Map<String, String> userDetails = sceneFunction.getUserDetailsMap();
                     initializeVoterScenes(sceneFunction.getElectionBundle(), userDetails);
                     DisplayAccessor.nextScene();
@@ -285,12 +285,12 @@ public class DisplayManager {
                 if(inFinalScenes) break;
                 //inFinalScenes = true;
                 new Thread(()->{ try {
-                        sceneFunction.fetchUserDetails();
-                        Map<String, String> userDetails = sceneFunction.getUserDetailsMap();
-                        initializeVoterScenes(sceneFunction.getElectionBundle(), userDetails);
-                        inFinalScenes = true;
-                        DisplayAccessor.nextScene();
-                    } catch(Exception e){e.printStackTrace();}
+                    if(!sceneFunction.fetchUserDetails()) return; //loop till it returns true
+                    Map<String, String> userDetails = sceneFunction.getUserDetailsMap();
+                    initializeVoterScenes(sceneFunction.getElectionBundle(), userDetails);
+                    inFinalScenes = true;
+                    DisplayAccessor.nextScene();
+                } catch(Exception e){e.printStackTrace();}
                 }, "Scene3 - Fetch Voter Details").start();
                 break;
             case DisplayAccessor.USER_DETAILS_ERROR_SCENE:
@@ -300,7 +300,7 @@ public class DisplayManager {
 
 
     //Note: sceneX.rootIndex.fxml
-    private void invokeRootFunction(int rootIndex) throws Exception{
+    protected void invokeRootFunction(int rootIndex) {
         switch(rootIndex){
 
             //to do /////////////////bbbbbbbbbbbbbbbbuuuuuuuuuuuuuuuuuuugggggggggggggggggggggssssssssssssssssssss
