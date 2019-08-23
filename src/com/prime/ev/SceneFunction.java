@@ -44,27 +44,48 @@ public class SceneFunction {
 
 
 
-    protected boolean fetchUserDetails() throws FileNotFoundException{
-        //wait until card is inserted
-        Platform.runLater(()-> ((Label) DisplayAccessor.getCurrentScene().lookup("#prompt"))
-                .setText("insert your card"));
-        try{Thread.sleep(2000);} catch(Exception e){e.printStackTrace();}
-
-
+    protected boolean fetchUserDetails() {
         //set visibility
         Platform.runLater(()->{
-            ((Label) DisplayAccessor.getCurrentScene().lookup("#prompt"))
-                    .setText("fetching details...");
-            DisplayAccessor.getCurrentScene().lookup("#prompt").setVisible(true);
             DisplayAccessor.getCurrentScene().lookup("#retryButton").setVisible(false);
+            DisplayAccessor.getCurrentScene().lookup("#prompt").getStyleClass().remove("error-label");
+            ((Label) DisplayAccessor.getCurrentScene().lookup("#prompt"))
+                    .setText("insert your card");
+            DisplayAccessor.getCurrentScene().lookup("#prompt").setVisible(true);
         });
 
-        String rawServerResponse = Factory.fetchUserData(/*id*/);  //long blocking operation
+
+        //wait until card is inserted
+        try{Thread.sleep(2000);} catch(Exception e){e.printStackTrace();}
+
+        Platform.runLater(()->((Label) DisplayAccessor.getCurrentScene().lookup("#prompt"))
+                .setText("fetching details..."));
+
+        //read card
+        try{Thread.sleep(2000);} catch(Exception e){e.printStackTrace();}
+        String voterId = Factory.readCard();
+
+        //card is bad, invalid or rejected
+        if(voterId==null) {
+            userDetailError(Factory.INVALID_CARD); //Factory.INVALID_CARD
+            return false;
+        }
+
+        //get server response
+        String rawServerResponse = Factory.fetchUserData(voterId);  //long blocking operation
+        //server error
         if(rawServerResponse==null) {
             connectionTimeOut(Factory.USER_FETCH_ERROR); return false;
         }
 
         MessageIntent msi = new Gson().fromJson(rawServerResponse, MessageIntent.class);
+
+        //server returns "invalid voter"
+        if(msi.header.get("title").toUpperCase()=="INVALID_VOTER"){
+            userDetailError(Factory.INVALID_VOTER);
+            return false;
+        }
+
         currentRawUserData = new Gson().toJson(msi.body);
         currentUserData = new Gson().fromJson(currentRawUserData, UserData.class);
 
@@ -84,10 +105,50 @@ public class SceneFunction {
     }
 
 
-    protected void userDetailError(){
-        //wait for voter to retract card
+    protected void userDetailError(int cause){
+        switch(cause){
+            case Factory.INVALID_CARD:
+                Platform.runLater(()->{
+                    ((Label) DisplayAccessor.getCurrentScene().lookup("#prompt"))
+                            .setText("Invalid card. Retract!");
+                    DisplayAccessor.getCurrentScene().lookup("#prompt")
+                            .getStyleClass().add("error-label");
+                }); break;
+
+            case Factory.INVALID_VOTER:
+                Platform.runLater(()->{
+                    ((Label) DisplayAccessor.getCurrentScene().lookup("#prompt"))
+                            .setText("No valid record!");
+                    DisplayAccessor.getCurrentScene().lookup("#prompt")
+                            .getStyleClass().add("error-label");
+                }); break;
+
+            case Factory.FINGERPRINT_MISMATCH:
+                DisplayAccessor.getCurrentScene().lookup("#error")
+                        .setVisible(true); break;
+        }
+
         /*@debug*/System.out.println("user detail error");
-        DisplayAccessor.setScene(DisplayAccessor.ANOTHER_NEW_VOTER_SCENE);
+        /*
+         * I think a function similar to connection timeout should replace
+         * calling a new scene here.
+         */
+
+        //wait for voter to retract card, then undo color setting
+        try{Thread.sleep(1500);}catch(Exception e){e.printStackTrace();}
+        switch(cause){
+            case Factory.INVALID_CARD:
+            case Factory.INVALID_VOTER:
+                DisplayAccessor.getCurrentScene().lookup("#prompt")
+                        .getStyleClass().remove("error-label");
+                int action = DisplayAccessor.inFinalScenes() ? DisplayAccessor.ANOTHER_NEW_VOTER_SCENE
+                        : DisplayAccessor.NEW_VOTER_SCENE;
+                DisplayAccessor.invokeSceneFunction(action);
+                break;
+            case Factory.FINGERPRINT_MISMATCH:
+                DisplayAccessor.getCurrentScene().lookup("#error")
+                        .setVisible(false); break;
+        }
     }
 
 
@@ -164,15 +225,15 @@ public class SceneFunction {
 
     private void showUserDetailRetryOption(){
         Platform.runLater(()->{
-            DisplayAccessor.getCurrentScene().lookup("#prompt").setVisible(false);
+            ((Label) (DisplayAccessor.getCurrentScene().lookup("#prompt")))
+                    .setText("connection timeout");
+            DisplayAccessor.getCurrentScene().lookup("#prompt")
+                    .getStyleClass().add("error-label");
             Button retryButton = (Button) (DisplayAccessor.getCurrentScene().lookup("#retryButton"));
             retryButton.setVisible(true);
             int action = DisplayAccessor.inFinalScenes() ? DisplayAccessor.ANOTHER_NEW_VOTER_SCENE
                     : DisplayAccessor.NEW_VOTER_SCENE;
-            retryButton.setOnAction(e->{
-                try{DisplayAccessor.invokeSceneFunction(action);}
-                catch(IOException ioe){ioe.printStackTrace();}
-            });
+            retryButton.setOnAction(e-> DisplayAccessor.invokeSceneFunction(action));
         });
     }
 
@@ -181,7 +242,7 @@ public class SceneFunction {
         //verify fingerPrint
         String fingerprint = Factory.getFingerprint();
         if(!fingerprint.equals(currentUserData.fingerprint)){
-            userDetailError();
+            userDetailError(Factory.FINGERPRINT_MISMATCH);
             return;
         }
 

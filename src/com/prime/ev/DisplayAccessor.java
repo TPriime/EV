@@ -30,7 +30,7 @@ public class DisplayAccessor {
     public static int indexOfScene(Scene scene) {return displayManager.indexOfScene(scene);}
     public static void setScene(int sceneConstant){ displayManager.setScene(sceneConstant);}
     public static Scene getCurrentScene() {return displayManager.getCurrentScene();}
-    public static void invokeSceneFunction(int sceneIndex) throws IOException {displayManager.invokeSceneFunction(sceneIndex);}
+    public static void invokeSceneFunction(int sceneIndex) {displayManager.invokeSceneFunction(sceneIndex);}
     public static void invokeRootFunction(int rootIndex) {displayManager.invokeRootFunction(rootIndex);}
 
 

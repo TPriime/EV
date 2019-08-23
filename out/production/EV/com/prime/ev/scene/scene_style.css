@@ -22,16 +22,16 @@
 
 
 .button {
-    /*@debug*/
     -fx-padding: 15px;
-
-    -fx-background-color: #052E05; /*#2A9310;*/
-
+    -fx-background-color: green; /*#052E05;*/
     -fx-font-weight: bold;
     -fx-font-size: 25px;
     -fx-text-fill: white;
     -fx-background-radius: 30px;
-    /*-fx-background-color: hsb(50, 10%, 30%);*/
+}
+
+.button:pressed {
+    -fx-background-color: #052E05;
 }
 
 .text-field {
@@ -55,12 +55,6 @@
 .user-details .label {
     -fx-font-size: 24px;
 }
-
-
-
-
-
-
 
 
 

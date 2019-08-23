@@ -259,7 +259,7 @@ public class DisplayManager {
     }
 
 
-    protected void invokeSceneFunction(int sceneIndex) throws IOException{
+    protected void invokeSceneFunction(int sceneIndex){
         /*@debug*/System.out.println("\ninvoked scene function with index: "+sceneIndex);
 
         if(inFinalScenes){
@@ -293,8 +293,8 @@ public class DisplayManager {
                 } catch(Exception e){e.printStackTrace();}
                 }, "Scene3 - Fetch Voter Details").start();
                 break;
-            case DisplayAccessor.USER_DETAILS_ERROR_SCENE:
-                sceneFunction.userDetailError(); break;
+            //case DisplayAccessor.USER_DETAILS_ERROR_SCENE:
+            //    sceneFunction.userDetailError(); break;
         }
     }
 

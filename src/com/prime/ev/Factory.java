@@ -34,6 +34,9 @@ public class Factory {
     static final int FETCH_ERROR = 1;
     static final int NO_FETCH = 2;
     static final int USER_FETCH_ERROR = 3;
+    static final int INVALID_VOTER = 4;
+    static final int FINGERPRINT_MISMATCH = 5;
+    static final int INVALID_CARD = 6;
 
     private static final long MAX_CONNECTION_DELAY_MILLIS = 3000;
     private static final String VOTE_LOG_PATH = "vote_log.txt";
@@ -158,13 +161,20 @@ public class Factory {
 
 
 
-    public static String fetchUserData() {
+    public static String fetchUserData(String voterId) {
         try{Thread.sleep(1000);}catch (Exception e){}/////////////////////
 
         System.out.println("fetching user data");
-        String response = awaitResponse(new MessageIntent("GET", "USER_DATA", null, ""), MAX_CONNECTION_DELAY_MILLIS);
+        String response = awaitResponse(new MessageIntent("GET", "USER_DATA", null, voterId),
+                MAX_CONNECTION_DELAY_MILLIS);
         return response;
     }
+
+
+    public static String readCard(){
+        return "fa45689c";///////for now
+    }
+
 
 
     private static String awaitResponse(MessageIntent msi, long duration){
