@@ -5,6 +5,7 @@
     -fx-highlight-fill: green;
 }
 
+
 .list-cell:selected{
     -fx-background-color: green;
 }
@@ -36,21 +37,15 @@
 .text-field {
     -fx-font-size: 24px;
     -fx-background-radius: 8px;
+    -fx-spacing: 15px;
 }
 
 .text-field:focused {
-
 }
 
 .advice {
     -fx-font-size: 18px;
     -fx-font-style: italic;
-}
-
-.error-label{
-    -fx-font-style: italic;
-    -fx-font-weight: normal;
-    -fx-font-color: red;
 }
 
 .title {
@@ -59,4 +54,24 @@
 
 .user-details .label {
     -fx-font-size: 24px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.error-label{
+    -fx-font-style: italic;
+    -fx-font-weight: normal;
+    -fx-text-fill: red;
 }

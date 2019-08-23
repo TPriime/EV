@@ -40,6 +40,7 @@
                         <RowConstraints vgrow="SOMETIMES" />
                         <RowConstraints vgrow="SOMETIMES" />
                         <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label text="First Name" />
@@ -48,12 +49,14 @@
                         <Label text="Gender" GridPane.rowIndex="3" />
                         <Label text="State" GridPane.rowIndex="4" />
                         <Label text="Town" GridPane.rowIndex="5" />
-                        <Label fx:id="name" text="Label" GridPane.columnIndex="1" />
-                        <Label fx:id="surname" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label fx:id="othername" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label fx:id="gender" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <Label fx:id="state" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Label fx:id="town" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label fx:id="name" text=":    nil" GridPane.columnIndex="1" />
+                        <Label fx:id="surname" text=":    nil" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label fx:id="othername" text=":    nil" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label fx:id="gender" text=":    nil" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label fx:id="state" text=":    nil" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label fx:id="town" text=":    nil" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label text="LGA" GridPane.rowIndex="6" />
+                        <Label fx:id="lga" text=":    nil" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                      </children>
                   </GridPane>
                </children>
