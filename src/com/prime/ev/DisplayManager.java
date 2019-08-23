@@ -28,22 +28,22 @@ import javafx.stage.Stage;
  * Created by Prime on 8/4/2019.
  */
 public class DisplayManager {
-    private static Stage primaryStage;
+    private Stage primaryStage;
     private static ArrayList<Scene> sceneList;
     private final String SCENE_NAME_FORMAT = "scene/scene";
 
-    protected final int DELAY_MILLIS = 2000;
+    final int DELAY_MILLIS = 2000;
     private final SceneFunction sceneFunction;
     public static int addedScenes = -1;
 
-    protected boolean inFinalScenes = false;
+    boolean inFinalScenes = false;
 
-    DisplayManager(Stage primaryStage) throws  Exception{
+    DisplayManager(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        sceneList = new ArrayList<Scene>();
+        sceneList = new ArrayList<>();
         sceneFunction = new SceneFunction(this);
 
-        new Thread(()-> initializeAndStartFirstScenes(), "Initialize First Scenes").start();
+        new Thread(this::initializeAndStartFirstScenes, "Initialize First Scenes").start();
     }
 
 
@@ -69,7 +69,7 @@ public class DisplayManager {
 
 
 
-    protected int initializeVoterScenes(ArrayList<ElectionData> electionBundle, Map<String, String> userDetails) throws IOException{
+    private int initializeVoterScenes(ArrayList<ElectionData> electionBundle, Map<String, String> userDetails) throws IOException{
         URL fxml_url = getClass().getResource("scene/scene5.fxml");
         int numberOfVoterScenes = 0;
 
@@ -100,7 +100,7 @@ public class DisplayManager {
         Image userImage = new Image(DisplayAccessor.RESOURCES+"/image.jpg");
         ((ImageView) scene4.lookup("#userImage")).setImage(userImage);
 
-        ((ImageView) scene4.lookup("#userImage")).setClip(new Circle(256, 256,256));
+        scene4.lookup("#userImage").setClip(new Circle(256, 256,256));
 
         sceneList.add(scene4);
 
@@ -154,7 +154,7 @@ public class DisplayManager {
             StackPane sPane = FXMLLoader.load(getClass().getResource("customfx/party_box.fxml"));
             ((Label) sPane.lookup("#party_name")).setText(partyName);
 
-            Image partyLogo = null;
+            Image partyLogo;
             try{ partyLogo = new Image(DisplayAccessor.RESOURCES+"/logo/"+partyName+".jpg"); }
             catch(IllegalArgumentException i){
                 partyLogo = new Image(DisplayAccessor.RESOURCES+"/logo/default.jpg");
@@ -193,7 +193,7 @@ public class DisplayManager {
     }
 
 
-    protected void setScene(Scene scene) {
+    private void setScene(Scene scene) {
         Platform.runLater(()->{
             primaryStage.setScene(scene);
             try{
@@ -205,7 +205,7 @@ public class DisplayManager {
     }
 
 
-    protected void setScene(int sceneConstant){
+    void setScene(int sceneConstant){
         switch (sceneConstant){
             case DisplayAccessor.ANOTHER_NEW_VOTER_SCENE:
                 setScene(getScene(DisplayAccessor.ANOTHER_NEW_VOTER_SCENE)); break;
@@ -218,13 +218,13 @@ public class DisplayManager {
 
 
 
-    protected Scene getCurrentScene(){return primaryStage.getScene();}
+    Scene getCurrentScene(){return primaryStage.getScene();}
 
-    protected Scene getScene(int sceneIndex){
+    private Scene getScene(int sceneIndex){
         return sceneList.get(sceneIndex-1);
     }
 
-    protected int indexOfScene(Scene scene) {
+    private int indexOfScene(Scene scene) {
         int index = sceneList.indexOf(scene);
         index = index<0 ? index : index+1;
         return index;
@@ -241,7 +241,7 @@ public class DisplayManager {
     }
 
 
-    public void nextScene() {
+    void nextScene() {
         /*@debug*/System.out.println("\nnextScene invoked");
         int oldSceneIndex = indexOfScene(getCurrentScene());
         int newSceneIndex = oldSceneIndex + 1;
@@ -251,7 +251,7 @@ public class DisplayManager {
     }
 
 
-    public void prevScene() {
+    void prevScene() {
         int currentSceneIndex = sceneList.indexOf(getCurrentScene());
         if(currentSceneIndex > 1)
             setScene(sceneList.get(--currentSceneIndex));
@@ -259,7 +259,7 @@ public class DisplayManager {
     }
 
 
-    protected void invokeSceneFunction(int sceneIndex){
+    void invokeSceneFunction(int sceneIndex){
         /*@debug*/System.out.println("\ninvoked scene function with index: "+sceneIndex);
 
         if(inFinalScenes){
@@ -272,26 +272,30 @@ public class DisplayManager {
         switch(sceneIndex) {
             case DisplayAccessor.ANOTHER_NEW_VOTER_SCENE:
                 if(!inFinalScenes) break;
-                new Thread(()->{ try {
+                Thread scene1Thread = new Thread(()->{ try {
                     if(!sceneFunction.fetchUserDetails()) return; //loop till it returns true
                     Map<String, String> userDetails = sceneFunction.getUserDetailsMap();
                     initializeVoterScenes(sceneFunction.getElectionBundle(), userDetails);
                     DisplayAccessor.nextScene();
                 } catch(Exception e){e.printStackTrace();}
-                }, "Scene3 - Fetch Voter Details").start();
+                }, "Scene1 - Fetch Voter Details");
+                scene1Thread.start();
+                DisplayAccessor.addSceneThread(scene1Thread);
                 break;
 
             case DisplayAccessor.NEW_VOTER_SCENE:
                 if(inFinalScenes) break;
                 //inFinalScenes = true;
-                new Thread(()->{ try {
+                Thread scene3Thread = new Thread(()->{ try {
                     if(!sceneFunction.fetchUserDetails()) return; //loop till it returns true
                     Map<String, String> userDetails = sceneFunction.getUserDetailsMap();
                     initializeVoterScenes(sceneFunction.getElectionBundle(), userDetails);
                     inFinalScenes = true;
                     DisplayAccessor.nextScene();
                 } catch(Exception e){e.printStackTrace();}
-                }, "Scene3 - Fetch Voter Details").start();
+                }, "Scene3 - Fetch Voter Details");
+                scene3Thread.start();
+                DisplayAccessor.addSceneThread(scene3Thread);
                 break;
             //case DisplayAccessor.USER_DETAILS_ERROR_SCENE:
             //    sceneFunction.userDetailError(); break;
@@ -300,7 +304,7 @@ public class DisplayManager {
 
 
     //Note: sceneX.rootIndex.fxml
-    protected void invokeRootFunction(int rootIndex) {
+    void invokeRootFunction(int rootIndex) {
         switch(rootIndex){
 
             //to do /////////////////bbbbbbbbbbbbbbbbuuuuuuuuuuuuuuuuuuugggggggggggggggggggggssssssssssssssssssss

@@ -4,31 +4,26 @@ import com.google.gson.Gson;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import javafx.application.Platform;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.util.HashMap;
 import java.util.stream.Collectors;
 
 
 
 public class Factory {
 
-    static JSONObject factoryObject;
-    static String PROPERTY_FILE = "device_properties.json";
-    static boolean newMessage = false;
-    static String serverResponse = "";
-    static final String SERVER = "http://127.0.0.1:8080";
-    static final String WS_SERVER = "ws://127.0.0.1:8080";
-    static final String ELECTION_DATA_API = SERVER + "/api/election_data";
+    private static JSONObject factoryObject;
+    private static String PROPERTY_FILE = "device_properties.json";
+    private static boolean newMessage = false;
+    private static String serverResponse = "";
+    private static final String SERVER = "http://127.0.0.1:8080";
+    private static final String WS_SERVER = "ws://127.0.0.1:8080";
+    private static final String ELECTION_DATA_API = SERVER + "/api/election_data";
 
     static final int SERVER_DOWN = 0;
     static final int FETCH_ERROR = 1;
@@ -43,6 +38,7 @@ public class Factory {
 
     private static WebSocket webSocket;
     private static PrintWriter voteLogger;
+
 
     static {
         try{
@@ -71,7 +67,7 @@ public class Factory {
     }
 
 
-    public static String fetchElectionData() throws IOException {
+    static String fetchElectionData() throws IOException {
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(ELECTION_DATA_API).openConnection();
             String response;
@@ -104,7 +100,7 @@ public class Factory {
 
 
 
-    public static boolean createSocketConnection() throws WebSocketException, IOException{
+    static boolean createSocketConnection() throws WebSocketException, IOException{
          MWebSocket connector = new MWebSocket(WS_SERVER, new WebSocketAdapter(){
             @Override public void onTextMessage(WebSocket webSocket, String message){
                 incomingMessage(message);
@@ -124,13 +120,12 @@ public class Factory {
             }
         }, "My Socket Reconnection Thread").start();
 
-        if(webSocket.isOpen()) return true;
-        else return false;
+        return webSocket.isOpen();
     }
 
 
 
-    public static void incomingMessage(String message){
+    private static void incomingMessage(String message){
         newMessage = true;
         serverResponse = Crypto.decrypt(message);
         System.out.println(serverResponse);
@@ -160,8 +155,7 @@ public class Factory {
 
 
 
-
-    public static String fetchUserData(String voterId) {
+    static String fetchUserData(String voterId) {
         try{Thread.sleep(1000);}catch (Exception e){}/////////////////////
 
         System.out.println("fetching user data");
@@ -171,7 +165,7 @@ public class Factory {
     }
 
 
-    public static String readCard(){
+    static String readCard(){
         return "fa45689c";///////for now
     }
 
@@ -191,12 +185,12 @@ public class Factory {
 
 
 
-    public static String getFingerprint(){
+    static String getFingerprint(){
         return "";
     }
 
 
-    public static void sendAndRecordVote(VoteData voteInstance){
+    static void sendAndRecordVote(VoteData voteInstance){
         recordVote(voteInstance);  //log vote
         MessageIntent voteIntent = new MessageIntent("POST", "vote_data", null, voteInstance);
         sendMessage(voteIntent);
@@ -212,5 +206,10 @@ public class Factory {
 
     private static void recordVote(VoteData voteData){
         voteLogger.printf("\n\n%d: \n%s", 100, new Gson().toJson(voteData));
+    }
+
+
+    static boolean isCardPresent(){
+        return true;
     }
 }

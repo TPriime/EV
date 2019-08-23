@@ -18,6 +18,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,18 +34,18 @@ public class SceneFunction {
     private final long MAX_CONNECTION_DELAY_MILLIS = 30000;
 
 
-    protected SceneFunction(DisplayManager displayManager){
+    SceneFunction(DisplayManager displayManager){
         //this.displayManager = displayManager;
     }
 
 
-    protected ArrayList<ElectionData> getElectionBundle(){
+    ArrayList<ElectionData> getElectionBundle(){
         return (ArrayList<ElectionData>) electionBundle.clone();
     }
 
 
 
-    protected boolean fetchUserDetails() {
+    boolean fetchUserDetails() {
         //set visibility
         Platform.runLater(()->{
             DisplayAccessor.getCurrentScene().lookup("#retryButton").setVisible(false);
@@ -71,6 +72,9 @@ public class SceneFunction {
             return false;
         }
 
+        //begin  card read loop
+        checkForCardLoop();
+
         //get server response
         String rawServerResponse = Factory.fetchUserData(voterId);  //long blocking operation
         //server error
@@ -81,7 +85,7 @@ public class SceneFunction {
         MessageIntent msi = new Gson().fromJson(rawServerResponse, MessageIntent.class);
 
         //server returns "invalid voter"
-        if(msi.header.get("title").toUpperCase()=="INVALID_VOTER"){
+        if(msi.header.get("title").equalsIgnoreCase("INVALID_VOTER")){
             userDetailError(Factory.INVALID_VOTER);
             return false;
         }
@@ -93,7 +97,7 @@ public class SceneFunction {
     }
 
 
-    protected Map<String, String> getUserDetailsMap() throws ParseException {
+    Map<String, String> getUserDetailsMap() throws ParseException {
         JSONParser jsonParser = new JSONParser();
         JSONObject userData = (JSONObject) jsonParser.parse(currentRawUserData);
         Map<String, String> userDataMap = new HashMap<>();
@@ -105,7 +109,7 @@ public class SceneFunction {
     }
 
 
-    protected void userDetailError(int cause){
+    private void userDetailError(int cause){
         switch(cause){
             case Factory.INVALID_CARD:
                 Platform.runLater(()->{
@@ -132,6 +136,11 @@ public class SceneFunction {
         /*
          * I think a function similar to connection timeout should replace
          * calling a new scene here.
+         *
+         * Also when card read function is implemented,
+         * this should part of the code should be stripped since
+         * the new voter scene will be invoked which will also
+         * undo every change/error setting
          */
 
         //wait for voter to retract card, then undo color setting
@@ -152,7 +161,7 @@ public class SceneFunction {
     }
 
 
-    protected void fetchElectionBundle() throws IOException {
+    void fetchElectionBundle() throws IOException {
         /*@debug*/System.out.println("\nfetching vote data");
 
         Gson gson = new Gson();
@@ -163,21 +172,18 @@ public class SceneFunction {
 
 
 
-    protected boolean createSocketConnection() throws Exception{
+    boolean createSocketConnection() throws Exception{
         long startTime = System.currentTimeMillis();
-        while(!Factory.createSocketConnection()){
-            if((System.currentTimeMillis()-startTime) > MAX_CONNECTION_DELAY_MILLIS) {
-                ///////////////////////////////////////////////connectionTimeOut(Factory.SERVER_DOWN);
+        while(!Factory.createSocketConnection())
+            if((System.currentTimeMillis()-startTime) > MAX_CONNECTION_DELAY_MILLIS)
                 return false;
-            }
-        };
         return true;
     }
 
 
     private void connectionTimeOut(int cause) {
         System.out.println("\n\nconnection timeout fetching user data");
-        final String message[] = new String[1];
+        final String[] message = new String[1];
         switch(cause){
             case Factory.SERVER_DOWN: message[0] = "Servers are currently down";
                 break;
@@ -200,9 +206,9 @@ public class SceneFunction {
     }
 
 
-    public void showStartStatus(boolean connected){
+    void showStartStatus(boolean connected){
         if(connected) showStartOption();
-        else connectionTimeOut(Factory.SERVER_DOWN);;
+        else connectionTimeOut(Factory.SERVER_DOWN);
     }
 
     private void showStartOption(){
@@ -238,7 +244,7 @@ public class SceneFunction {
     }
 
 
-    public void castVote(List<Scene> voteScenes){
+    void castVote(List<Scene> voteScenes){
         //verify fingerPrint
         String fingerprint = Factory.getFingerprint();
         if(!fingerprint.equals(currentUserData.fingerprint)){
@@ -257,24 +263,46 @@ public class SceneFunction {
                     voteMap.put(electionTitle,votedParty);
                 }
             }));
-        /*Gson gson = new Gson();
-        String voteInstance = gson.toJson(new VoteData(currentUserData.id,voteMap));
-        */
 
-        Factory.sendAndRecordVote(new VoteData(currentUserData.id,voteMap));
+
+        Factory.sendAndRecordVote(new VoteData(currentUserData.id, voteMap));
 
         new Thread(()->{
-            try{Thread.sleep(2000);}catch(Exception e){}
+            try{Thread.sleep((long)(DisplayAccessor.getDelay()*1.8));}catch(Exception e){e.printStackTrace();}
             DisplayAccessor.nextScene();//////////////////////////////////////////////////////////////////
         }).start();
     }
 
 
 
-    public void newVote() {
+    void newVote() {
+        /*
+         * when the card reading function is implemented,
+         * this function should become invalid and stripped since
+         * the checkForCardLoop() will wait for a retraction and move to
+         * the new voter scene
+         */
+
+
+
+        //wait for user to remove card to start new vote/////////////////////////////////////////////////
         new Thread(()->{
-            try{Thread.sleep(2000);}catch(Exception e){}
+            try{Thread.sleep(2000);}catch(Exception e){e.printStackTrace();}
             DisplayAccessor.setScene(DisplayAccessor.ANOTHER_NEW_VOTER_SCENE);
         }, "New Vote").start();
+    }
+
+
+
+    private void checkForCardLoop(){
+        new Thread(()->{
+            while(!Factory.isCardPresent()){
+                try{Thread.sleep(2000);}catch(Exception e){e.printStackTrace();}
+                DisplayAccessor.killSceneThreads();
+                int action = DisplayAccessor.inFinalScenes() ? DisplayAccessor.ANOTHER_NEW_VOTER_SCENE
+                        : DisplayAccessor.NEW_VOTER_SCENE;
+                DisplayAccessor.invokeSceneFunction(action);
+            }
+        }, "Check For Card Thread").start();
     }
 }
