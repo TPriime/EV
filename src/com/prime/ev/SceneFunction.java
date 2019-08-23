@@ -102,12 +102,14 @@ public class SceneFunction {
         JSONObject userData = (JSONObject) jsonParser.parse(currentRawUserData);
         Map<String, String> userDataMap = new HashMap<>();
 
-        userData.forEach((userDetail, value)->
-            userDataMap.put((String)userDetail, (String)value));
+        userData.forEach((userDetail, value)->{
+            if(!((String)userDetail).equalsIgnoreCase("image"))
+                userDataMap.put((String)userDetail, (String)value);});
 
         return userDataMap;
     }
 
+    UserData getUserData(){return currentUserData;}
 
     private void userDetailError(int cause){
         switch(cause){

@@ -1,12 +1,16 @@
 package com.prime.ev;
 
+import java.nio.ByteBuffer;
+import java.util.Map;
+
 public class UserData {
-    protected String id;
-    protected String name;
-    protected String surname;
-    protected String othername;
-    protected String gender;
-    protected String state;
-    protected String town;
-    protected String fingerprint;
+    String id;
+    String name;
+    String surname;
+    String othername;
+    String gender;
+    String state;
+    String town;
+    String fingerprint;
+    Map<String, Object> image;
 }

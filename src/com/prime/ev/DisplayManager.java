@@ -1,13 +1,20 @@
 package com.prime.ev;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import com.sun.deploy.security.MSCredentialManager;
+import com.sun.org.apache.xerces.internal.xs.datatypes.ByteList;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +29,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import sun.awt.image.ByteArrayImageSource;
+
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
 
 
 /**
@@ -97,10 +108,24 @@ public class DisplayManager {
                 System.out.println("no "+data+" field found on scene");
             }
         });
-        Image userImage = new Image(DisplayAccessor.RESOURCES+"/image.jpg");
-        ((ImageView) scene4.lookup("#userImage")).setImage(userImage);
 
-        scene4.lookup("#userImage").setClip(new Circle(256, 256,256));
+        UserData usd = sceneFunction.getUserData();
+        ArrayList<Byte> imageByteList = (ArrayList<Byte>) usd.image.get("data");
+        byte[] imageBytes = new byte[imageByteList.size()];
+        Object[] bytes = imageByteList.toArray();
+        for(int i=0; i<imageByteList.size(); i++) { imageBytes[i] = (byte)(double)(Double)bytes[i]; }
+
+        InputStream i = new ByteArrayInputStream(imageBytes);
+        Image userImage = new Image(i);
+
+
+        ImageView imageView = (ImageView)scene4.lookup("#userImage");
+
+        imageView.setFitWidth(512);
+        imageView.setFitHeight(512);
+        imageView.setPreserveRatio(false);
+        imageView.setClip(new Circle(imageView.getFitWidth()/2, imageView.getFitHeight()/2,imageView.getFitWidth()/2));
+        imageView.setImage(userImage);
 
         sceneList.add(scene4);
 
