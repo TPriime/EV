@@ -11,6 +11,7 @@ import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 
@@ -21,9 +22,9 @@ public class Factory {
     private static String PROPERTY_FILE = "device_properties.json";
     private static boolean newMessage = false;
     private static String serverResponse = "";
-    private static final String SERVER = "http://127.0.0.1:8080";
-    private static final String WS_SERVER = "ws://127.0.0.1:8080";
-    private static final String ELECTION_DATA_API = SERVER + "/api/election_data";
+    private static String SERVER = "http://127.0.0.1:8080";
+    private static String WS_SERVER = "ws://127.0.0.1:8080";
+    private static String ELECTION_DATA_API = SERVER + "/api/election_data";
 
     static final int SERVER_DOWN = 0;
     static final int FETCH_ERROR = 1;
@@ -33,8 +34,9 @@ public class Factory {
     static final int FINGERPRINT_MISMATCH = 5;
     static final int INVALID_CARD = 6;
 
-    private static final long MAX_CONNECTION_DELAY_MILLIS = 3000;
+    private static long MAX_CONNECTION_DELAY_MILLIS = 3000;
     private static final String VOTE_LOG_PATH = "vote_log.txt";
+    private static final String CONFIG_PATH = "config.properties";
 
     private static WebSocket webSocket;
     private static PrintWriter voteLogger;
@@ -53,6 +55,20 @@ public class Factory {
                     file, true)
                     , true);
         } catch(IOException ioe){ ioe.printStackTrace(); }
+
+        try(InputStream in = new FileInputStream(CONFIG_PATH)){
+            Properties prop = new Properties();
+            prop.load(in);
+            SERVER = prop.getProperty("server")==null ? "http://127.0.0.1:8080" : prop.getProperty("server");
+            WS_SERVER = prop.getProperty("ws-server")==null ? "ws://127.0.0.1:8080" : prop.getProperty("ws-server");
+            MAX_CONNECTION_DELAY_MILLIS = prop.getProperty("max-connection-delay")==null ?
+                    3000 : Long.parseLong(prop.getProperty("max-connection-delay"));
+            ELECTION_DATA_API = SERVER + "/api/election_data";
+        } catch(IOException ioe){
+            System.out.println("couldn't locate config.properties, falling back to default");
+        } catch(NumberFormatException nfe){
+            nfe.printStackTrace();
+        }
     }
 
 

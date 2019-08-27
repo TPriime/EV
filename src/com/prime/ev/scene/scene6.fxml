@@ -17,7 +17,7 @@
    <bottom>
       <StackPane BorderPane.alignment="CENTER">
          <children>
-            <Pane>
+            <Pane fx:id="prevButton">
                <children>
                     <fx:include source="../customfx/button_prev.fxml" />
                </children>
