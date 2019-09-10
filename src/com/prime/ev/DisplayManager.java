@@ -64,7 +64,7 @@ public class DisplayManager {
             try {
                 URL fxml_url = getClass().getResource(SCENE_NAME_FORMAT + i + ".fxml");
                 if (fxml_url == null) break;
-                Scene scene = new Scene(FXMLLoader.load(fxml_url), DisplayAccessor.SCREEN_WIDTH, DisplayAccessor.SCREEN_HEIGHT);
+                Scene scene = new Scene(FXMLLoader.load(fxml_url));
                 scene.getStylesheets().add(getClass().getResource("scene/scene_style.css").toExternalForm());
                 sceneList.add(scene);
             }catch(IOException e){e.printStackTrace();}

@@ -17,18 +17,19 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         primaryStage.setTitle("Electronic Voting Project");
         //to prevent ugly startup
-        Scene firstScene = new Scene(FXMLLoader.load(getClass().getResource("scene/scene1.fxml")),
-                DisplayAccessor.SCREEN_WIDTH,
-                DisplayAccessor.SCREEN_HEIGHT);
+        Scene firstScene = new Scene(FXMLLoader.load(getClass().getResource("scene/scene1.fxml")));
         firstScene.getStylesheets().add(getClass().getResource("scene/scene_style.css").toExternalForm());
         primaryStage.setScene(firstScene);
         displayAccessor = new DisplayAccessor(primaryStage);
+
         primaryStage.show();
         primaryStage.setOnCloseRequest(windowEvent->{
             System.out.println("\nshutting down...");
             Platform.exit();
             System.exit(0);
         });
+        primaryStage.setHeight(DisplayAccessor.SCREEN_HEIGHT);
+        primaryStage.setWidth(DisplayAccessor.SCREEN_WIDTH);
     }
 
 
