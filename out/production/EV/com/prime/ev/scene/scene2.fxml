@@ -23,11 +23,7 @@
                         <Insets top="30.0" />
                     </VBox.margin>
                 </Label>
-                <TextField fx:id="passwordField" maxWidth="-Infinity" minWidth="-Infinity" onAction="#validatePassword" prefWidth="350.0" promptText="Password" styleClass="bold-class">
-                    <VBox.margin>
-                        <Insets />
-                    </VBox.margin>
-                </TextField>
+            <PasswordField fx:id="passwordField" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="350.0" promptText="Password" />
                 <Button fx:id="pass_button" mnemonicParsing="false" onAction="#validatePassword" text="Activate" />
             </children>
             <BorderPane.margin>

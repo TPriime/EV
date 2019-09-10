@@ -11,10 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 
-import com.sun.deploy.security.MSCredentialManager;
-import com.sun.org.apache.xerces.internal.xs.datatypes.ByteList;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
@@ -29,10 +26,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-import sun.awt.image.ByteArrayImageSource;
-
-import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
 
 
 /**

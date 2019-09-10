@@ -1,7 +1,7 @@
 .root {
     /*-fx-background-color: #8fbc8f;*/
     /*-fx-background-color: #2A802A;*/
-    -fx-background-color: white;
+    -fx-background-color: #fafafa;
     -fx-highlight-fill: green;
 }
 
@@ -34,10 +34,11 @@
     -fx-background-color: #052E05;
 }
 
-.text-field {
+.password-field {
     -fx-font-size: 24px;
     -fx-background-radius: 8px;
     -fx-spacing: 15px;
+    -fx-focus-color: green;
 }
 
 .text-field:focused {

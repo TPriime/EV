@@ -106,13 +106,6 @@ public class Factory {
         return null;
     }
 
-/*
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public static String defaultServerResponse(){
-        System.out.println("couldn't reach server");
-        return new BufferedReader(new InputStreamReader(Factory.class.getResourceAsStream("ElectionData.json")))
-                .lines().collect(Collectors.joining());
-    }*/
 
 
 
