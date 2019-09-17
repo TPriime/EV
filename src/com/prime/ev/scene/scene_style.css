@@ -1,7 +1,7 @@
 .root {
     /*-fx-background-color: #8fbc8f;*/
     /*-fx-background-color: #2A802A;*/
-    -fx-background-color: #fafafa;
+    -fx-background-color: white;/*#fafafa;*/
     -fx-highlight-fill: green;
 }
 

@@ -57,12 +57,12 @@ public class Factory {
         } catch(IOException ioe){ ioe.printStackTrace(); }
 
         try(InputStream in = new FileInputStream(CONFIG_PATH)){
-            Properties prop = new Properties();
-            prop.load(in);
-            SERVER = prop.getProperty("server")==null ? "http://127.0.0.1:8080" : prop.getProperty("server");
-            WS_SERVER = prop.getProperty("ws-server")==null ? "ws://127.0.0.1:8080" : prop.getProperty("ws-server");
-            MAX_CONNECTION_DELAY_MILLIS = prop.getProperty("max-connection-delay")==null ?
-                    3000 : Long.parseLong(prop.getProperty("max-connection-delay"));
+            Properties props = new Properties();
+            props.load(in);
+            SERVER = props.getProperty("server")==null ? "http://127.0.0.1:8080" : props.getProperty("server");
+            WS_SERVER = props.getProperty("ws-server")==null ? "ws://127.0.0.1:8080" : props.getProperty("ws-server");
+            MAX_CONNECTION_DELAY_MILLIS = props.getProperty("max-connection-delay")==null ?
+                    3000 : Long.parseLong(props.getProperty("max-connection-delay"));
             ELECTION_DATA_API = SERVER + "/api/election_data";
         } catch(IOException ioe){
             System.out.println("couldn't locate config.properties, falling back to default");

@@ -9,7 +9,7 @@ import java.util.List;
 public class DisplayAccessor {
     private static DisplayManager displayManager;
     static final int SCREEN_WIDTH =  1280;
-    static final int SCREEN_HEIGHT =  800;
+    static final int SCREEN_HEIGHT =  850;
     static final String RESOURCES = "resources";
 
     static final int FETCH_RESOURCES_ROOT = 1;
