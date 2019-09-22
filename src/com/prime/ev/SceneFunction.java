@@ -169,7 +169,10 @@ public class SceneFunction {
         Gson gson = new Gson();
         Type arrayListType = new TypeToken<ArrayList<ElectionData>>(){}.getType();
         electionBundle = gson.fromJson(Factory.fetchElectionData(), arrayListType);
-        if(electionBundle == null) connectionTimeOut(Factory.FETCH_ERROR);
+        if(electionBundle == null) {
+            connectionTimeOut(Factory.FETCH_ERROR);
+            throw new NullPointerException("no election bundle");
+        }
     }
 
 
@@ -198,6 +201,7 @@ public class SceneFunction {
         }
 
         if(message[0]!=null) Platform.runLater(()->{
+            System.out.println("CONNECTION TIMEOUT: "+ message[0]);
             ((Label) DisplayAccessor.getCurrentScene().lookup("#fetchMessage"))
                     .setText(message[0]);
             Button retryButton = ((Button) DisplayAccessor.getCurrentScene().lookup("#serverRetryButton"));

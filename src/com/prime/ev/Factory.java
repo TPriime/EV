@@ -83,7 +83,7 @@ public class Factory {
     }
 
 
-    static String fetchElectionData() throws IOException {
+    static String fetchElectionData() throws IOException, ConnectException {
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(ELECTION_DATA_API).openConnection();
             String response;
