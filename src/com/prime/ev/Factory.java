@@ -41,6 +41,7 @@ public class Factory {
     private static WebSocket webSocket;
     private static PrintWriter voteLogger;
 
+    private static final String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImlkIjoiNWQ1ZTY0NjQzODdjODI3MmViNDdhNmEzIn0sImlhdCI6MTU2NjQ2NzI4NSwiZXhwIjoxNTY5MDU5Mjg1fQ.JNw0G7mcOHB1EJdEGfu8mdrrW-6-41SnloIy2sXWbPA";
 
     static {
         try{
@@ -89,6 +90,9 @@ public class Factory {
             String response;
             conn.setRequestMethod("GET");
             conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("x-access-token", token);
+
             if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 response = new BufferedReader(new InputStreamReader(conn.getInputStream()))
                         .lines().collect(Collectors.joining());
