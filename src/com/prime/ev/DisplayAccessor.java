@@ -31,7 +31,9 @@ public class DisplayAccessor {
     //public static Scene getScene(int sceneIndex) {return displayManager.getScene(sceneIndex);}
     //public static int indexOfScene(Scene scene) {return displayManager.indexOfScene(scene);}
     public static void setScene(int sceneConstant){ displayManager.setScene(sceneConstant);}
-    static Scene getCurrentScene() {return displayManager.getCurrentScene();}
+    public static int indexOfScene(Scene scene) { return displayManager.indexOfScene(scene);}
+    public static void resetScene(){setScene(indexOfScene(getCurrentScene()));}
+    public static Scene getCurrentScene() {return displayManager.getCurrentScene();}
     static void invokeSceneFunction(int sceneIndex) {displayManager.invokeSceneFunction(sceneIndex);}
     static void invokeRootFunction(int rootIndex) {displayManager.invokeRootFunction(rootIndex);}
 

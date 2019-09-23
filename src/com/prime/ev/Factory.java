@@ -11,6 +11,8 @@ import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -109,6 +111,49 @@ public class Factory {
         } catch (ConnectException ce){ ce.printStackTrace();}
 
         return null;
+    }
+
+
+
+    static String getElectionBundleForVoter(UserData userData) throws IOException {
+        ////////////////////////////////////////////////////////////////////////////should get data via websocket connection
+        System.out.println("fetching election data");
+        String msgBody = userData.id + ";" + userData.lga;
+        String response = awaitResponse(new MessageIntent("GET", "ELECTION_DATA", null, msgBody),
+                MAX_CONNECTION_DELAY_MILLIS);
+        return response;
+
+        /*
+        try {
+            HttpURLConnection conn = (HttpURLConnection) new URL(ELECTION_DATA_API).openConnection();
+            String response;
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("x-access-token", token);
+
+            conn.setDoOutput(true);
+            Map<String, String> req = new HashMap<>();
+            req.put("", userData.id);
+            //req.put("", "");
+            conn.getOutputStream().write(new Gson().toJson(req).getBytes());
+
+            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                response = new BufferedReader(new InputStreamReader(conn.getInputStream()))
+                        .lines().collect(Collectors.joining());
+                System.out.println("server response:" + response);
+                return response;
+            }
+            else if(conn.getResponseCode() != HttpURLConnection.HTTP_OK){
+                /*@debug/System.out.println("error code: "+ conn.getResponseCode()+"; error msg: "+ conn.getResponseMessage());
+            }
+            else {
+                /*@debug/System.out.println("no server response");
+            }
+        } catch (ConnectException ce){ ce.printStackTrace();}
+
+        return null;
+        */
     }
 
 

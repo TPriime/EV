@@ -10,6 +10,7 @@ public class UserData {
     String othername;
     String gender;
     String state;
+    String lga;
     String town;
     String fingerprint;
     Map<String, Object> image;

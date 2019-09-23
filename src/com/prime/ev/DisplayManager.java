@@ -74,6 +74,8 @@ public class DisplayManager {
 
 
     private int initializeVoterScenes(ArrayList<ElectionData> electionBundle, Map<String, String> userDetails) throws IOException{
+        if (electionBundle==null) throw new NullPointerException("electionBundle is null");
+
         URL fxml_url = getClass().getResource("scene/scene5.fxml");
         int numberOfVoterScenes = 0;
 
@@ -242,7 +244,7 @@ public class DisplayManager {
         return sceneList.get(sceneIndex-1);
     }
 
-    private int indexOfScene(Scene scene) {
+    int indexOfScene(Scene scene) {
         int index = sceneList.indexOf(scene);
         index = index<0 ? index : index+1;
         return index;
@@ -295,7 +297,9 @@ public class DisplayManager {
                     Map<String, String> userDetails = sceneFunction.getUserDetailsMap();
                     initializeVoterScenes(sceneFunction.getElectionBundle(), userDetails);
                     DisplayAccessor.nextScene();
-                } catch(Exception e){e.printStackTrace();}
+                }
+                catch (NullPointerException npe){serverResponseError();}
+                catch(Exception e){e.printStackTrace();}
                 }, "Scene1 - Fetch Voter Details");
                 scene1Thread.start();
                 DisplayAccessor.addSceneThread(scene1Thread);
@@ -310,7 +314,9 @@ public class DisplayManager {
                     initializeVoterScenes(sceneFunction.getElectionBundle(), userDetails);
                     inFinalScenes = true;
                     DisplayAccessor.nextScene();
-                } catch(Exception e){e.printStackTrace();}
+                }
+                catch (NullPointerException npe){serverResponseError();}
+                catch(Exception e){e.printStackTrace();}
                 }, "Scene3 - Fetch Voter Details");
                 scene3Thread.start();
                 DisplayAccessor.addSceneThread(scene3Thread);
@@ -339,6 +345,14 @@ public class DisplayManager {
                 }, "Fetch Election Resource").start();
                 break;
         }
+    }
+
+
+    private void serverResponseError(){
+        Platform.runLater(()->{
+            ((Label) getCurrentScene().lookup("#prompt")).setText("Error occurred fetching election data");
+            getCurrentScene().lookup("#retryButton").setVisible(true);
+        });
     }
 
 

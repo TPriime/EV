@@ -18,11 +18,15 @@ public class Controller {
     public ListView partyList;
 
 
-    public void nextScreen() throws Exception{
+    public void nextScreen(){
         DisplayAccessor.nextScene();
     }
 
-    public void validatePassword() throws Exception{
+    public void resetScene(){
+        DisplayAccessor.resetScene();
+    }
+
+    public void validatePassword(){
         if(passwordField.getText().equals(Factory.getProperty("password"))) {
             warningLabel.setVisible(false);
             nextScreen(); return;

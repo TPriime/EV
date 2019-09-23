@@ -3,6 +3,7 @@ package com.prime.ev;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -34,13 +35,12 @@ public class SceneFunction {
     private final long MAX_CONNECTION_DELAY_MILLIS = 30000;
 
 
-    SceneFunction(DisplayManager displayManager){
-        //this.displayManager = displayManager;
-    }
 
-
-    ArrayList<ElectionData> getElectionBundle(){
-        return (ArrayList<ElectionData>) electionBundle.clone();
+    ArrayList<ElectionData> getElectionBundle() throws IOException {
+        Gson gson = new Gson();
+        MessageIntent msi = gson.fromJson(Factory.getElectionBundleForVoter(currentUserData), MessageIntent.class);
+        Type arrayListType = new TypeToken<ArrayList<ElectionData>>(){}.getType();
+        return gson.fromJson((String)msi.body.get("election_data"), arrayListType);
     }
 
 

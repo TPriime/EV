@@ -7,7 +7,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prime.ev.scene.Controller">
    <padding>
       <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
    </padding>
@@ -26,7 +26,7 @@
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Button fx:id="retryButton" mnemonicParsing="false" text="Retry" visible="false">
+                  <Button fx:id="retryButton" mnemonicParsing="false" onAction="#resetScene" text="Retry" visible="false">
                      <StackPane.margin>
                         <Insets top="180.0" />
                      </StackPane.margin></Button>
