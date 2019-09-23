@@ -24,7 +24,8 @@ public class Factory {
     private static String serverResponse = "";
     private static String SERVER = "http://127.0.0.1:8080";
     private static String WS_SERVER = "ws://127.0.0.1:8080";
-    private static String ELECTION_DATA_API = SERVER + "/api/election_data";
+    //private static String ELECTION_DATA_API = SERVER + "/api/election_data";
+    private static String ELECTION_DATA_API = SERVER + "/evoting_api/v1/elections/";
 
     static final int SERVER_DOWN = 0;
     static final int FETCH_ERROR = 1;
@@ -84,7 +85,7 @@ public class Factory {
     }
 
 
-    static String fetchElectionData() throws IOException, ConnectException {
+    static String fetchElectionData() throws IOException {
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(ELECTION_DATA_API).openConnection();
             String response;

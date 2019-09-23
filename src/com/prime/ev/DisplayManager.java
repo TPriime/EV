@@ -332,7 +332,7 @@ public class DisplayManager {
             case DisplayAccessor.FETCH_RESOURCES_ROOT:
                 new Thread(()->{
                     try{
-                        sceneFunction.fetchElectionBundle();
+                        //sceneFunction.fetchElectionBundle();
                         sceneFunction.showStartStatus(sceneFunction.createSocketConnection());
                     }
                     catch(Exception e){e.printStackTrace();}
