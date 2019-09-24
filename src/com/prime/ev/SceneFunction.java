@@ -32,7 +32,7 @@ public class SceneFunction {
     private ArrayList<ElectionData> electionBundle;
     private UserData currentUserData;
     private String currentRawUserData;
-    private final long MAX_CONNECTION_DELAY_MILLIS = 30000;
+    private final long MAX_CONNECTION_DELAY_MILLIS = 6000;
 
 
 
@@ -40,7 +40,10 @@ public class SceneFunction {
         Gson gson = new Gson();
         MessageIntent msi = gson.fromJson(Factory.getElectionBundleForVoter(currentUserData), MessageIntent.class);
         Type arrayListType = new TypeToken<ArrayList<ElectionData>>(){}.getType();
-        return gson.fromJson((String)msi.body.get("election_data"), arrayListType);
+        //must convert back to json since Gson already assumes the object data to be of type ArrayList
+        //therefore it can longer be easily inferred as String
+        String arrayListToJson = gson.toJson(msi.body.get("election_data"));
+        return (ArrayList<ElectionData>) gson.fromJson(arrayListToJson, arrayListType);
     }
 
 
@@ -132,6 +135,7 @@ public class SceneFunction {
             case Factory.FINGERPRINT_MISMATCH:
                 DisplayAccessor.getCurrentScene().lookup("#error")
                         .setVisible(true); break;
+                        ///////////////////////////////////////////////////////implement the ability to kick of user after some trials
         }
 
         /*@debug*/System.out.println("user detail error");

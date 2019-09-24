@@ -165,7 +165,12 @@ public class Factory {
                 incomingMessage(message);
             }
         });
-        webSocket = connector.connect();
+        try{
+            webSocket = connector.connect();
+        } catch (WebSocketException wse){
+            System.out.println(wse.getError()+" - "+wse.getMessage());
+            return false;
+        }
 
         //reconnect
         new Thread(()->{

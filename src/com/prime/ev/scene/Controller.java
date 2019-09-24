@@ -23,6 +23,8 @@ public class Controller {
     }
 
     public void resetScene(){
+        //if(DisplayAccessor.inFinalScenes()) DisplayAccessor.setScene(DisplayAccessor.ANOTHER_NEW_VOTER_SCENE);
+        //else DisplayAccessor.setScene(DisplayAccessor.NEW_VOTER_SCENE);
         DisplayAccessor.resetScene();
     }
 

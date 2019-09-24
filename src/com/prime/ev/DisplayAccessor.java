@@ -13,8 +13,8 @@ public class DisplayAccessor {
     static final String RESOURCES = "resources";
 
     static final int FETCH_RESOURCES_ROOT = 1;
-    static final int ANOTHER_NEW_VOTER_SCENE = 1;
-    static final int NEW_VOTER_SCENE = 3;
+    public static final int ANOTHER_NEW_VOTER_SCENE = 1;
+    public static final int NEW_VOTER_SCENE = 3;
     static final int USER_DETAILS_ERROR_SCENE = -1;
 
     static final int FINAL_VOTE_BEGIN_SCENE = 3;
@@ -38,7 +38,7 @@ public class DisplayAccessor {
     static void invokeRootFunction(int rootIndex) {displayManager.invokeRootFunction(rootIndex);}
 
 
-    static boolean inFinalScenes() {return displayManager.inFinalScenes;}
+    public static boolean inFinalScenes() {return displayManager.inFinalScenes;}
     static long getDelay() {return displayManager.DELAY_MILLIS;}
 
 

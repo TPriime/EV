@@ -45,7 +45,7 @@ public class DisplayManager {
     DisplayManager(Stage primaryStage) {
         this.primaryStage = primaryStage;
         sceneList = new ArrayList<>();
-        sceneFunction = new SceneFunction(this);
+        sceneFunction = new SceneFunction();
 
         new Thread(this::initializeAndStartFirstScenes, "Initialize First Scenes").start();
     }
@@ -298,8 +298,10 @@ public class DisplayManager {
                     initializeVoterScenes(sceneFunction.getElectionBundle(), userDetails);
                     DisplayAccessor.nextScene();
                 }
-                catch (NullPointerException npe){serverResponseError();}
-                catch(Exception e){e.printStackTrace();}
+                catch(Exception e){
+                    serverResponseError();
+                    e.printStackTrace();
+                }
                 }, "Scene1 - Fetch Voter Details");
                 scene1Thread.start();
                 DisplayAccessor.addSceneThread(scene1Thread);
@@ -315,8 +317,10 @@ public class DisplayManager {
                     inFinalScenes = true;
                     DisplayAccessor.nextScene();
                 }
-                catch (NullPointerException npe){serverResponseError();}
-                catch(Exception e){e.printStackTrace();}
+                catch(Exception e){
+                    serverResponseError();
+                    e.printStackTrace();
+                }
                 }, "Scene3 - Fetch Voter Details");
                 scene3Thread.start();
                 DisplayAccessor.addSceneThread(scene3Thread);
