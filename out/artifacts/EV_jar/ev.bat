@@ -1,0 +1,1 @@
+"%java_home%"\bin\java --module-path "%JFX_MODS%" --add-modules javafx.fxml,javafx.controls -jar EV.jar
