@@ -220,8 +220,6 @@ public class Factory {
 
 
     static String fetchUserData(String voterId) {
-        try{Thread.sleep(1000);}catch (Exception e){}/////////////////////
-
         System.out.println("fetching user data");
         String response = awaitResponse(new MessageIntent("GET", "USER_DATA", null, voterId),
                 MAX_CONNECTION_DELAY_MILLIS);
@@ -230,7 +228,7 @@ public class Factory {
 
 
     static String readCard(){
-        return "fa45689c";///////for now
+        return "12345";///////for now
     }
 
 
@@ -250,7 +248,7 @@ public class Factory {
 
 
     static String getFingerprint(){
-        return "";
+        return "fingerprint";
     }
 
 

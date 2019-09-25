@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.shape.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1">
    <padding>
       <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
    </padding>
@@ -48,15 +53,15 @@
                         <Label text="Other" GridPane.rowIndex="2" />
                         <Label text="Gender" GridPane.rowIndex="3" />
                         <Label text="State" GridPane.rowIndex="4" />
-                        <Label text="Town" GridPane.rowIndex="5" />
+                        <Label text="Town" GridPane.rowIndex="6" />
                         <Label fx:id="name" text=":    nil" GridPane.columnIndex="1" />
                         <Label fx:id="surname" text=":    nil" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label fx:id="othername" text=":    nil" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Label fx:id="gender" text=":    nil" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <Label fx:id="state" text=":    nil" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Label fx:id="town" text=":    nil" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                        <Label text="LGA" GridPane.rowIndex="6" />
-                        <Label fx:id="lga" text=":    nil" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <Label fx:id="town" text=":    nil" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <Label text="LGA" GridPane.rowIndex="5" />
+                        <Label fx:id="lga" text=":    nil" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                      </children>
                   </GridPane>
                </children>
