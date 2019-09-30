@@ -7,10 +7,7 @@ import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -42,9 +39,12 @@ public class DisplayManager {
 
     boolean inFinalScenes = false;
 
+    private Map<String, String> currentElectionCodeMap;
+
     DisplayManager(Stage primaryStage) {
         this.primaryStage = primaryStage;
         sceneList = new ArrayList<>();
+        currentElectionCodeMap = new HashMap<>();
         sceneFunction = new SceneFunction();
 
         new Thread(this::initializeAndStartFirstScenes, "Initialize First Scenes").start();
@@ -71,6 +71,10 @@ public class DisplayManager {
         }
     }
 
+
+    protected Map<String, String> getCurrentElectionCodeMap(){
+        return currentElectionCodeMap;
+    }
 
 
     private int initializeVoterScenes(ArrayList<ElectionData> electionBundle, Map<String, String> userDetails) throws IOException{
@@ -136,6 +140,7 @@ public class DisplayManager {
                 ListView listView = ((ListView) scene.lookup("#partyList"));
                 listView.setItems(FXCollections.observableArrayList(wrapInView(electionData.getPartyList())));
 
+                currentElectionCodeMap.put(electionData.getTitle(), electionData.getCode());
                 sceneList.add(scene);
                 ++numberOfVoterScenes;
             }

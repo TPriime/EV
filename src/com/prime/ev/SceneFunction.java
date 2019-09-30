@@ -20,10 +20,7 @@ import org.json.simple.parser.ParseException;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.rmi.server.ExportException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
@@ -263,19 +260,24 @@ public class SceneFunction {
         }
 
         //at this point inFinalScene = true
-        Map<String, String> voteMap = new HashMap<>();
+        List<Map<String, String>> votes = new ArrayList<>();
         voteScenes.forEach(voteScene->
             ((ListView)voteScene.lookup("#partyList")).getItems().forEach(partyBox->{
+                Map<String, String> voteMap = new HashMap<>();
                 boolean isSelected = ((Parent) partyBox).lookup("#fingerPrintBox").isVisible();
                 if(isSelected){
                     String electionTitle = ((Label)voteScene.lookup("#electionTitle")).getText();
                     String votedParty = ((Label)((Parent) partyBox).lookup("#party_name")).getText();
-                    voteMap.put(electionTitle,votedParty);
+                    voteMap.put("election", electionTitle);
+                    voteMap.put("electionCode", DisplayAccessor.getCurrentElectionCodeMap().get(electionTitle));
+                    voteMap.put("party", votedParty);
+                    votes.add(voteMap);
                 }
             }));
 
 
-        Factory.sendAndRecordVote(new VoteData(currentUserData.id, voteMap));
+        String voteTime = new Date(System.currentTimeMillis()).toString();
+        Factory.sendAndRecordVote(new VoteData(currentUserData.id, Factory.getProperty("device_id"), votes, voteTime));
 
         new Thread(()->{
             try{Thread.sleep((long)(DisplayAccessor.getDelay()*1.8));}catch(Exception e){e.printStackTrace();}

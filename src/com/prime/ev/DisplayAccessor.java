@@ -5,6 +5,7 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DisplayAccessor {
     private static DisplayManager displayManager;
@@ -36,6 +37,7 @@ public class DisplayAccessor {
     public static Scene getCurrentScene() {return displayManager.getCurrentScene();}
     static void invokeSceneFunction(int sceneIndex) {displayManager.invokeSceneFunction(sceneIndex);}
     static void invokeRootFunction(int rootIndex) {displayManager.invokeRootFunction(rootIndex);}
+    static Map<String, String> getCurrentElectionCodeMap (){ return displayManager.getCurrentElectionCodeMap();}
 
 
     public static boolean inFinalScenes() {return displayManager.inFinalScenes;}

@@ -205,7 +205,7 @@ public class Factory {
                 "LOGIN",
                 "id",
                 null,
-                getProperty("id")
+                getProperty("device_id")
         );
         sendMessage(msi);
     }
