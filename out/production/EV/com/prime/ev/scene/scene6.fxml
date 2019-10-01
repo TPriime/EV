@@ -15,7 +15,7 @@
     <center>
         <HBox alignment="CENTER" BorderPane.alignment="CENTER">
             <children>
-                <ListView fx:id="partyList" minWidth="740.0" onKeyPressed="#choose" onMouseClicked="#choose" onTouchPressed="#choose" />
+                <ListView fx:id="partyList" minWidth="740.0" />
             </children>
         </HBox>
     </center>
