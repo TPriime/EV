@@ -146,8 +146,8 @@ public class DisplayManager {
             }
         }
 
-        //set the final last 2 scenes
-        setSceneFromIndex(6, 7);
+        //set the final last 3 scenes
+        setSceneFromIndex(6, 8);
 
         return numberOfVoterScenes;
     }
@@ -284,10 +284,33 @@ public class DisplayManager {
     }
 
 
+    private void summarizeVoteData() throws IOException{
+        ArrayList<StackPane> sPanes = new ArrayList<>();
+        for(Map<String, String> voteMap: sceneFunction.getVotes(trimScenesToElect(sceneList))){
+            StackPane sPane = FXMLLoader.load(getClass().getResource("customfx/voteItemBox.fxml"));
+            ((Label) sPane.lookup("#electionTitle")).setText(voteMap.get("election"));
+            ((Label) sPane.lookup("#partyName")).setText(voteMap.get("party"));
+
+            Image partyLogo;
+            try{ partyLogo = new Image(DisplayAccessor.RESOURCES+"/logo/"+voteMap.get("party")+".jpg"); }
+            catch(IllegalArgumentException i){
+                partyLogo = new Image(DisplayAccessor.RESOURCES+"/logo/default.jpg");
+            }
+            ((ImageView) sPane.lookup("#partyLogo")).setImage(partyLogo);
+            sPanes.add(sPane);
+        }
+
+        ListView listView = ((ListView) getCurrentScene().lookup("#partyList"));
+        listView.setItems(FXCollections.observableArrayList(sPanes));
+    }
+
+
     void invokeSceneFunction(int sceneIndex){
         /*@debug*/System.out.println("\ninvoked scene function with index: "+sceneIndex);
 
         if(inFinalScenes){
+            if(sceneIndex == sceneList.size()-2)
+                try {summarizeVoteData();} catch(IOException ioe){ioe.printStackTrace();}
             if(sceneIndex == sceneList.size()-1)
                 sceneFunction.castVote(trimScenesToElect(sceneList));
             if(sceneIndex == sceneList.size())
@@ -366,6 +389,6 @@ public class DisplayManager {
 
 
     private List<Scene> trimScenesToElect(ArrayList<Scene> scenes){
-        return scenes.subList(DisplayAccessor.FINAL_VOTE_BEGIN_SCENE-1, sceneList.size()-2);
+        return scenes.subList(DisplayAccessor.FINAL_VOTE_BEGIN_SCENE-1, sceneList.size()-3);
     }
 }

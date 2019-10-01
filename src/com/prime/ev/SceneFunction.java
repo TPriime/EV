@@ -251,6 +251,26 @@ public class SceneFunction {
     }
 
 
+    List<Map<String, String>> getVotes(List<Scene> voteScenes){
+        List<Map<String, String>> votes = new ArrayList<>();
+        voteScenes.forEach(voteScene->
+                ((ListView)voteScene.lookup("#partyList")).getItems().forEach(partyBox->{
+                    Map<String, String> voteMap = new HashMap<>();
+                    boolean isSelected = ((Parent) partyBox).lookup("#fingerPrintBox").isVisible();
+                    if(isSelected){
+                        String electionTitle = ((Label)voteScene.lookup("#electionTitle")).getText();
+                        String votedParty = ((Label)((Parent) partyBox).lookup("#party_name")).getText();
+                        voteMap.put("election", electionTitle);
+                        voteMap.put("electionCode", DisplayAccessor.getCurrentElectionCodeMap().get(electionTitle));
+                        voteMap.put("party", votedParty);
+                        votes.add(voteMap);
+                    }
+                }));
+        return votes;
+    }
+
+
+
     void castVote(List<Scene> voteScenes){
         //verify fingerPrint
         String fingerprint = Factory.getFingerprint();
@@ -260,6 +280,7 @@ public class SceneFunction {
         }
 
         //at this point inFinalScene = true
+        /*
         List<Map<String, String>> votes = new ArrayList<>();
         voteScenes.forEach(voteScene->
             ((ListView)voteScene.lookup("#partyList")).getItems().forEach(partyBox->{
@@ -274,10 +295,11 @@ public class SceneFunction {
                     votes.add(voteMap);
                 }
             }));
-
+        */
 
         String voteTime = new Date(System.currentTimeMillis()).toString();
-        Factory.sendAndRecordVote(new VoteData(currentUserData.id, Factory.getProperty("device_id"), votes, voteTime));
+        Factory.sendAndRecordVote(
+                new VoteData(currentUserData.id, Factory.getProperty("device_id"), getVotes(voteScenes), voteTime));
 
         new Thread(()->{
             try{Thread.sleep((long)(DisplayAccessor.getDelay()*1.8));}catch(Exception e){e.printStackTrace();}
