@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="PCardReader">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Lib/java/PCardReader.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

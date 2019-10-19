@@ -4,14 +4,17 @@ import com.google.gson.Gson;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
+import com.prime.util.cardio.CardIO;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import javax.smartcardio.CardTerminal;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -60,9 +63,10 @@ public class Factory {
                     , true);
         } catch(IOException ioe){ ioe.printStackTrace(); }
 
-        try(InputStream in = new FileInputStream(CONFIG_PATH)){
+        try(InputStream in = new FileInputStream(new File(CONFIG_PATH))){
             Properties props = new Properties();
             props.load(in);
+            /*@debug*/System.out.println("loading properties from file...");
             SERVER = props.getProperty("server")==null ? "http://127.0.0.1:8080" : props.getProperty("server");
             WS_SERVER = props.getProperty("ws-server")==null ? "ws://127.0.0.1:8080" : props.getProperty("ws-server");
             MAX_CONNECTION_DELAY_MILLIS = props.getProperty("max-connection-delay")==null ?
@@ -75,6 +79,22 @@ public class Factory {
         }
     }
 
+
+    private static void initCardReaderInterface(){
+        CardIO.getInstance().addListener(new CardIO.ICardListener() {
+            @Override
+            public void onCardInserted(CardTerminal cardTerminal) { }
+
+            @Override
+            public void onCardEjected(CardTerminal cardTerminal) { }
+
+            @Override
+            public void onDeviceDetected(List<CardTerminal> list) { }
+
+            @Override
+            public void onDeviceDetached(CardTerminal cardTerminal) { }
+        });
+    }
 
 
     public static String getProperty(String property) {
