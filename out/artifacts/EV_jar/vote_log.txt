@@ -38,3 +38,6 @@
 
 100: 
 {"voter_id":"14224","votes":{"Senatorial":"APGA","Governorship":"MDP"}}
+
+100: 
+{"voter":"5dc0ad9ab616f844f06b0225","device":"234567g","voteTime":"Tue Nov 05 02:57:23 WAT 2019","votes":[]}

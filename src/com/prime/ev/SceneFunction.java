@@ -59,11 +59,13 @@ public class SceneFunction {
         //wait until card is inserted
         try{Thread.sleep(2000);} catch(Exception e){e.printStackTrace();}
 
-        Platform.runLater(()->((Label) DisplayAccessor.getCurrentScene().lookup("#prompt"))
-                .setText("fetching details..."));
+        Platform.runLater(() -> ((Label) DisplayAccessor.getCurrentScene().lookup("#prompt"))
+                    .setText("fetching details..."));
 
         //read card
-        try{Thread.sleep(2000);} catch(Exception e){e.printStackTrace();}
+        try{//Thread.sleep(2000);
+            while(!Factory.isCardPresent()) continue;
+        } catch(Exception e){e.printStackTrace();}//////////////////////////////won't need try catch block////////////////////////////////
         String voterId = Factory.readCard();
 
         //card is bad, invalid or rejected
@@ -73,7 +75,7 @@ public class SceneFunction {
         }
 
         //begin  card read loop
-        checkForCardLoop();
+        runCardEjectListener();
 
         //get server response
         String rawServerResponse = Factory.fetchUserData(voterId);  //long blocking operation
@@ -130,7 +132,7 @@ public class SceneFunction {
                 }); break;
 
             case Factory.FINGERPRINT_MISMATCH:
-                DisplayAccessor.getCurrentScene().lookup("#error")
+                DisplayAccessor.getCurrentScene().lookup("#retry")
                         .setVisible(true); break;
                         ///////////////////////////////////////////////////////implement the ability to kick of user after some trials
         }
@@ -158,8 +160,8 @@ public class SceneFunction {
                 DisplayAccessor.invokeSceneFunction(action);
                 break;
             case Factory.FINGERPRINT_MISMATCH:
-                DisplayAccessor.getCurrentScene().lookup("#error")
-                        .setVisible(false); break;
+                DisplayAccessor.getCurrentScene().lookup("#retry")
+                        .setVisible(true); break;
         }
     }
 
@@ -272,9 +274,18 @@ public class SceneFunction {
 
 
     void castVote(List<Scene> voteScenes){
+        new Thread(()->
+            _castVote(voteScenes)
+        , "CastVote Thread").start();
+    }
+
+    void _castVote(List<Scene> voteScenes){
         //verify fingerPrint
-        String fingerprint = Factory.getFingerprint();
-        if(!fingerprint.equals(currentUserData.fingerprint)){
+        try{
+            if(!Factory.matchFingerprint(currentUserData.fingerprint))
+                throw new Exception("Exception in matching fingerprint");
+        } catch(Exception e){
+            e.printStackTrace();
             userDetailError(Factory.FINGERPRINT_MISMATCH);
             return;
         }
@@ -301,10 +312,10 @@ public class SceneFunction {
         Factory.sendAndRecordVote(
                 new VoteData(currentUserData.id, Factory.getProperty("device_id"), getVotes(voteScenes), voteTime));
 
-        new Thread(()->{
-            try{Thread.sleep((long)(DisplayAccessor.getDelay()*1.8));}catch(Exception e){e.printStackTrace();}
-            DisplayAccessor.nextScene();//////////////////////////////////////////////////////////////////
-        }).start();
+        //new Thread(()->{
+        try{Thread.sleep((long)(DisplayAccessor.getDelay()*1.8));}catch(Exception e){e.printStackTrace();}
+        DisplayAccessor.nextScene();//////////////////////////////////////////////////////////////////
+        //}).start();
     }
 
 
@@ -327,8 +338,8 @@ public class SceneFunction {
     }
 
 
-
-    private void checkForCardLoop(){
+    //resets when card is removed
+    private void runCardEjectListener(){
         new Thread(()->{
             while(!Factory.isCardPresent()){
                 try{Thread.sleep(2000);}catch(Exception e){e.printStackTrace();}

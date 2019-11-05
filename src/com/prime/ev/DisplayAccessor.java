@@ -10,7 +10,7 @@ import java.util.Map;
 public class DisplayAccessor {
     private static DisplayManager displayManager;
     static final int SCREEN_WIDTH =  1280;
-    static final int SCREEN_HEIGHT =  850;
+    static final int SCREEN_HEIGHT =  720;
     static final String RESOURCES = "resources";
 
     static final int FETCH_RESOURCES_ROOT = 1;
@@ -38,12 +38,16 @@ public class DisplayAccessor {
     static void invokeSceneFunction(int sceneIndex) {displayManager.invokeSceneFunction(sceneIndex);}
     static void invokeRootFunction(int rootIndex) {displayManager.invokeRootFunction(rootIndex);}
     static Map<String, String> getCurrentElectionCodeMap (){ return displayManager.getCurrentElectionCodeMap();}
+    public static void castVote(){displayManager.invokeSceneFunction(displayManager.getSceneCount()-1);}
 
+    public static void setResultScene(){displayManager.setResultScene();}
 
     public static boolean inFinalScenes() {return displayManager.inFinalScenes;}
     static long getDelay() {return displayManager.DELAY_MILLIS;}
 
 
     static void addSceneThread(Thread thread){ threadList.add(thread); }
-    static void killSceneThreads(){ threadList.forEach(Thread::interrupt);}
+
+    //function would only work if the threads listen to an interrupt event;
+    public static void killSceneThreads(){ threadList.forEach(Thread::interrupt);}
 }

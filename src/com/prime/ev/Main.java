@@ -30,6 +30,7 @@ public class Main extends Application {
         });
         primaryStage.setHeight(DisplayAccessor.SCREEN_HEIGHT);
         primaryStage.setWidth(DisplayAccessor.SCREEN_WIDTH);
+        primaryStage.setMaximized(true);
     }
 
 

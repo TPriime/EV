@@ -12,6 +12,7 @@ import java.util.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -219,6 +220,8 @@ public class DisplayManager {
 
 
     private void setScene(Scene scene) {
+        if(Thread.interrupted()) return;
+
         Platform.runLater(()->{
             primaryStage.setScene(scene);
             try{
@@ -305,13 +308,16 @@ public class DisplayManager {
     }
 
 
+    int getSceneCount(){return sceneList.size();}
+
+
     void invokeSceneFunction(int sceneIndex){
         /*@debug*/System.out.println("\ninvoked scene function with index: "+sceneIndex);
 
         if(inFinalScenes){
             if(sceneIndex == sceneList.size()-2)
                 try {summarizeVoteData();} catch(IOException ioe){ioe.printStackTrace();}
-            if(sceneIndex == sceneList.size()-1)
+            if(sceneIndex == sceneList.size()-1) //fingerprint reading/voting scene
                 sceneFunction.castVote(trimScenesToElect(sceneList));
             if(sceneIndex == sceneList.size())
                 sceneFunction.newVote();
@@ -377,6 +383,62 @@ public class DisplayManager {
                 }, "Fetch Election Resource").start();
                 break;
         }
+    }
+
+
+    void setResultScene(){
+        try {
+            Scene resultScene = new Scene(FXMLLoader.load(getClass().getResource("scene/results.fxml")));
+            resultScene.getStylesheets().add(getClass().getResource("scene/scene_style.css").toExternalForm());
+
+            //String predentialVoteCount = Factory.presidentialVoteCount == null ? "no Presidential vote taken!":Factory.presidentialVoteCount.toString();
+            StringBuilder presVoteCount = new StringBuilder();
+            ArrayList<StackPane> sPanes = new ArrayList<>();
+
+            if(Factory.presidentialVoteCount!=null){
+                Factory.presidentialVoteCount.stream().limit(3).forEach(entry->{
+                    presVoteCount.append(String.format("%s, %d\n", entry.getKey(), entry.getValue()));
+
+                    try{
+                        StackPane sPane = FXMLLoader.load(getClass().getResource("customfx/voteItemBox.fxml"));
+                        //sPane.setMaxHeight(80);
+                        ((Label) sPane.lookup("#electionTitle")).setText(entry.getKey());
+                        ((Label) sPane.lookup("#partyName")).setText(entry.getValue().toString());
+
+                        Image partyLogo;
+                        try{ partyLogo = new Image(DisplayAccessor.RESOURCES+"/logo/"+entry.getKey()+".jpg"); }
+                        catch(IllegalArgumentException i){
+                            partyLogo = new Image(DisplayAccessor.RESOURCES+"/logo/default.jpg");
+                        }
+                        ImageView imView = (ImageView) sPane.lookup("#partyLogo");
+                        imView.setFitWidth(80);
+                        imView.setFitHeight(80);
+                        imView.setPreserveRatio(false);
+                        //imView.setViewport(new Rectangle2D(50,50,50,50));
+                        imView.setImage(partyLogo);
+
+                        sPanes.add(sPane);
+                    }catch (Exception e){e.printStackTrace();}
+                });
+                ListView listView = ((ListView) resultScene.lookup("#rankedVoteList"));
+                listView.setItems(FXCollections.observableArrayList(sPanes));
+            }
+
+
+            StringBuilder summary = new StringBuilder();
+            Factory.voteSummary.forEach((election, count)->{
+                char[] _election = election.toCharArray();
+                _election[0] = String.valueOf(_election[0]).toUpperCase().toCharArray()[0];
+                summary.append(String.format("%s - %d votes\n", String.valueOf(_election), count));
+            });
+
+
+
+
+            //((Label)(resultScene.lookup("#presidential"))).setText(presVoteCount.toString());
+            ((Label)(resultScene.lookup("#summary"))).setText(summary.toString());
+            primaryStage.setScene(resultScene);
+        }catch (Exception e){e.printStackTrace();}
     }
 
 

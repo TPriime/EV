@@ -1,6 +1,7 @@
 package com.prime.ev;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
@@ -10,15 +11,13 @@ import org.json.simple.parser.JSONParser;
 
 import javax.smartcardio.CardTerminal;
 import java.io.*;
+import java.lang.reflect.Type;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
-
+import java.util.stream.Stream;
 
 
 public class Factory {
@@ -26,9 +25,10 @@ public class Factory {
     private static JSONObject factoryObject;
     private static String PROPERTY_FILE = "device_properties.json";
     private static boolean newMessage = false;
+    private static long voteCount = 0;
     private static String serverResponse = "";
-    private static String SERVER = "http://127.0.0.1:8080";
-    private static String WS_SERVER = "ws://127.0.0.1:8080";
+    private static String SERVER = "http://192.168.8.100:8080";//http://127.0.0.1:8080";
+    private static String WS_SERVER = "ws://192.168.8.100:8080";//"ws://127.0.0.1:8080";
     //private static String ELECTION_DATA_API = SERVER + "/api/election_data";
     private static String ELECTION_DATA_API = SERVER + "/evoting_api/v1/elections/";
 
@@ -41,13 +41,18 @@ public class Factory {
     static final int INVALID_CARD = 6;
 
     private static long MAX_CONNECTION_DELAY_MILLIS = 3000;
-    private static final String VOTE_LOG_PATH = "vote_log.txt";
     private static final String CONFIG_PATH = "config.properties";
 
     private static WebSocket webSocket;
     private static PrintWriter voteLogger;
 
     private static final String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImlkIjoiNWQ1ZTY0NjQzODdjODI3MmViNDdhNmEzIn0sImlhdCI6MTU2NjQ2NzI4NSwiZXhwIjoxNTY5MDU5Mjg1fQ.JNw0G7mcOHB1EJdEGfu8mdrrW-6-41SnloIy2sXWbPA";
+
+    public static final String VOTE_LOG_PATH = "vote_log2.txt";
+
+    public static Map<String, Integer> voteSummary;
+    public static List<Map.Entry<String, Integer>> presidentialVoteCount;
+
 
     static {
         try{
@@ -59,7 +64,7 @@ public class Factory {
         File file = new File(VOTE_LOG_PATH);
         try {
             voteLogger = new PrintWriter(new FileWriter(
-                    file, true)
+                    file, false)
                     , true);
         } catch(IOException ioe){ ioe.printStackTrace(); }
 
@@ -67,8 +72,8 @@ public class Factory {
             Properties props = new Properties();
             props.load(in);
             /*@debug*/System.out.println("loading properties from file...");
-            SERVER = props.getProperty("server")==null ? "http://127.0.0.1:8080" : props.getProperty("server");
-            WS_SERVER = props.getProperty("ws-server")==null ? "ws://127.0.0.1:8080" : props.getProperty("ws-server");
+            SERVER = props.getProperty("server")==null ? SERVER : props.getProperty("server");
+            WS_SERVER = props.getProperty("ws-server")==null ? WS_SERVER : props.getProperty("ws-server");
             MAX_CONNECTION_DELAY_MILLIS = props.getProperty("max-connection-delay")==null ?
                     3000 : Long.parseLong(props.getProperty("max-connection-delay"));
             ELECTION_DATA_API = SERVER + "/api/election_data";
@@ -212,7 +217,7 @@ public class Factory {
     private static void incomingMessage(String message){
         newMessage = true;
         serverResponse = Crypto.decrypt(message);
-        System.out.println(serverResponse);
+        //System.out.println(serverResponse);
         /*@debug*/ MessageIntent msi = new Gson().fromJson(serverResponse, MessageIntent.class);
         System.out.println("title: "+ msi.header.get("title"));
         //if(msi.header.get("title").equals("id"))
@@ -248,7 +253,19 @@ public class Factory {
 
 
     static String readCard(){
-        return "12345";///////for now
+        String cardID = null;
+        try{ cardID = _readCard(); }
+        catch (IOException ioe){ ioe.printStackTrace(); }
+        return cardID; //"12345";/////////////////////////////////////////////////////
+    }
+
+
+    private static String _readCard() throws IOException{
+        Process process = Runtime.getRuntime().exec(new String[]{"python", "read_card.py"});
+        BufferedInputStream buff  = new BufferedInputStream(process.getInputStream());
+        byte[] output = new byte[20];
+        buff.read(output);
+        return new String(output).trim();
     }
 
 
@@ -266,9 +283,29 @@ public class Factory {
     }
 
 
+    static boolean matchFingerprint(String fingerprints){
+        final List<Integer> result = new ArrayList<>();
 
-    static String getFingerprint(){
-        return "fingerprint";
+        List<List<String>> fprints = new Gson().fromJson(fingerprints, new TypeToken<List<List<String>>>(){}.getType());
+        fprints.stream().map(list->list.toString())
+                .forEach(fprint->{
+                    try{
+                        result.add(_matchFingerprint(fprint));
+                    }catch(Exception e){e.printStackTrace();}
+                });
+
+        int score = result.stream().max(Integer::compare).get();
+        /*@debug*/System.out.printf("match score: %d\n", score);//////////////////////////////////////////
+        return score>50;
+    }
+
+
+    private static int _matchFingerprint(String fingerprint) throws IOException{
+        Process process = Runtime.getRuntime().exec(new String[]{"python", "match_fingerprint.py", fingerprint});
+        BufferedInputStream buff  = new BufferedInputStream(process.getInputStream());
+        byte[] output = new byte[50];
+        buff.read(output);
+        return Integer.parseInt(new String(output).trim());
     }
 
 
@@ -287,10 +324,15 @@ public class Factory {
     }
 
     private static void recordVote(VoteData voteData){
-        voteLogger.printf("\n\n%d: \n%s", 100, new Gson().toJson(voteData));
+        voteLogger.printf("{%d: %s}\n", ++voteCount, new Gson().toJson(voteData));
     }
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //MAJOR WORK RIGHT NOW
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //run another python method for this
     static boolean isCardPresent(){
         return true;
     }

@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 public class VoteData {
-    private String voter;
-    private String device;
-    private String voteTime;
-    private List<Map<String, String>> votes;
+    public String voter;
+    public String device;
+    public String voteTime;
+    public List<Map<String, String>> votes;
 
     VoteData(String voter_id, String device_id, List<Map<String, String>> votes, String voteTime){
         this.voter = voter_id;
@@ -15,4 +15,6 @@ public class VoteData {
         this.device = device_id;
         this.voteTime = voteTime;
     }
+
+
 }

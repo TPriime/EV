@@ -38,4 +38,7 @@
          </children>
       </VBox>
    </center>
+   <top>
+      <Button mnemonicParsing="false" onAction="#endElection" text="End Election" BorderPane.alignment="CENTER_RIGHT" />
+   </top>
 </BorderPane>
