@@ -324,7 +324,7 @@ public class Factory {
     }
 
     private static void recordVote(VoteData voteData){
-        voteLogger.printf("{%d: %s}\n", ++voteCount, new Gson().toJson(voteData));
+        voteLogger.printf("%d-%s\n", ++voteCount, new Gson().toJson(voteData));
     }
 
 

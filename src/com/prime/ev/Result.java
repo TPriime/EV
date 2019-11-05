@@ -37,7 +37,7 @@ public class Result {
     public static Map<String, List<String>> getCountFromRawVoteDataJson(Stream<String> rawVoteDataJsonStream){
         Map<String, List<String>> votes = new HashMap<>();
 
-        rawVoteDataJsonStream.filter(line->!line.trim().isEmpty()).forEach(line -> {
+        rawVoteDataJsonStream.filter(line->line.contains("-")).forEach(line -> {
             VoteData voteData = new Gson().fromJson(line.split("-")[1], VoteData.class);
 
             voteData.votes.forEach(vote->{
