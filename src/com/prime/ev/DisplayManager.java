@@ -319,8 +319,8 @@ public class DisplayManager {
                 try {summarizeVoteData();} catch(IOException ioe){ioe.printStackTrace();}
             if(sceneIndex == sceneList.size()-1) //fingerprint reading/voting scene
                 sceneFunction.castVote(trimScenesToElect(sceneList));
-            if(sceneIndex == sceneList.size()) //return;//////////////////
-                sceneFunction.newVote(); //////////////////////////////////////remove this when card is implemented
+            if(sceneIndex == sceneList.size()) return;//////////////////do nothing
+                //sceneFunction.newVote(); //////////////////////////////////////remove this when card is implemented
         }
 
         switch(sceneIndex) {

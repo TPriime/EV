@@ -10,9 +10,11 @@
     -fx-background-color: green;
 }
 
-.list-view{
-    -fx-background-color: black;
+
+.list-view .list-cell:empty{
+    -fx-background-color: white;
 }
+
 
 .label {
     -fx-font-size: 35px;

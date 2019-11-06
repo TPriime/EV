@@ -46,14 +46,19 @@ public class SceneFunction {
 
 
     boolean fetchUserDetails() {
-
         //set visibility
         Platform.runLater(()->{
-            DisplayAccessor.getCurrentScene().lookup("#retryButton").setVisible(false);
-            DisplayAccessor.getCurrentScene().lookup("#prompt").getStyleClass().remove("error-label");
-            ((Label) DisplayAccessor.getCurrentScene().lookup("#prompt"))
-                    .setText("insert your card");
-            DisplayAccessor.getCurrentScene().lookup("#prompt").setVisible(true);
+            try {
+                DisplayAccessor.getCurrentScene().lookup("#retryButton").setVisible(false);
+                DisplayAccessor.getCurrentScene().lookup("#prompt").getStyleClass().remove("error-label");
+                ((Label) DisplayAccessor.getCurrentScene().lookup("#prompt"))
+                        .setText("insert your card");
+                DisplayAccessor.getCurrentScene().lookup("#prompt").setVisible(true);
+            } catch(NullPointerException npe){
+                //voter may have suddenly removed card, but should not halt execution at this point
+                // i.e. before runCardEjectListener() is invoked
+                npe.printStackTrace();
+            }
         });
 
 
@@ -64,7 +69,6 @@ public class SceneFunction {
             userDetailError(Factory.CARD_READ_ERR); return false;
         }
         catch(Exception e){e.printStackTrace(); return  false;}
-
 
 
         Platform.runLater(() -> ((Label) DisplayAccessor.getCurrentScene().lookup("#prompt"))
@@ -155,7 +159,7 @@ public class SceneFunction {
          */
 
         //wait for voter to retract card, then undo color setting
-        try{Thread.sleep(1500);}catch(Exception e){e.printStackTrace();}
+        /*try{Thread.sleep(1500);}catch(Exception e){e.printStackTrace();}
         switch(cause){
             case Factory.INVALID_CARD:
             case Factory.CARD_READ_ERR:
@@ -170,7 +174,7 @@ public class SceneFunction {
             case Factory.FINGERPRINT_MISMATCH:
                 DisplayAccessor.getCurrentScene().lookup("#retry")
                         .setVisible(true); break;
-        }
+        }*/
     }
 
 
@@ -348,18 +352,28 @@ public class SceneFunction {
 
     //resets when card is removed
     private void runCardEjectListener(){
-        new Thread(()->{
+        Thread cardEjectThread = new Thread(()->{
             try{
-                while(!Factory.isCardPresent()){
-                    try{Thread.sleep(2000);}catch(Exception e){e.printStackTrace();}
-                    DisplayAccessor.killSceneThreads();
-                    int action = DisplayAccessor.inFinalScenes() ? DisplayAccessor.ANOTHER_NEW_VOTER_SCENE
-                            : DisplayAccessor.NEW_VOTER_SCENE;
-                    DisplayAccessor.invokeSceneFunction(action);
+                while(Factory.isCardPresent()) {
+                    if(Thread.interrupted()) return;  //probably now in summary scene
+                    continue; //loop till card is ejected
                 }
+                try{Thread.sleep(1300);}catch(Exception e){e.printStackTrace();}
+
+                DisplayAccessor.killSceneThreads();
+                int action = DisplayAccessor.inFinalScenes() ? DisplayAccessor.ANOTHER_NEW_VOTER_SCENE
+                        : DisplayAccessor.NEW_VOTER_SCENE;
+                DisplayAccessor.setScene(action);
             }catch(IOException ioe){ //thrown by Factory.isCardPresent()
+                ioe.printStackTrace();
                 userDetailError(Factory.CARD_READ_ERR);
             }
-        }, "Check For Card Thread").start();
+        }, "Check For Card Thread");
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //commented out for now because it immediately gets interrupted by an unknown source
+        //instead of only by the Controller().endResult()
+        //DisplayAccessor.addSceneThread(cardEjectThread);
+        cardEjectThread.start();
     }
 }
