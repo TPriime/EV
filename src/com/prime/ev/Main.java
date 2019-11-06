@@ -22,15 +22,20 @@ public class Main extends Application {
         primaryStage.setScene(firstScene);
         displayAccessor = new DisplayAccessor(primaryStage);
 
-        primaryStage.show();
         primaryStage.setOnCloseRequest(windowEvent->{
             System.out.println("\nshutting down...");
             Platform.exit();
             System.exit(0);
         });
-        primaryStage.setHeight(DisplayAccessor.SCREEN_HEIGHT);
+
+        new Factory(); //force initialization of Factory class, so that properties will be read and set on time
+
         primaryStage.setWidth(DisplayAccessor.SCREEN_WIDTH);
-        primaryStage.setMaximized(true);
+        primaryStage.setHeight(DisplayAccessor.SCREEN_HEIGHT);
+        primaryStage.setMaximized(DisplayAccessor.MAXIMIZE_SCREEN);
+        primaryStage.setResizable(false);
+
+        primaryStage.show(); //show after adjustments are made
     }
 
 

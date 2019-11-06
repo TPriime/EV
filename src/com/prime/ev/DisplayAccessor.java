@@ -9,8 +9,9 @@ import java.util.Map;
 
 public class DisplayAccessor {
     private static DisplayManager displayManager;
-    static final int SCREEN_WIDTH =  1280;
-    static final int SCREEN_HEIGHT =  720;
+    static int SCREEN_WIDTH =  1280;
+    static int SCREEN_HEIGHT =  720;
+    static boolean MAXIMIZE_SCREEN = false;
     static final String RESOURCES = "resources";
 
     static final int FETCH_RESOURCES_ROOT = 1;
@@ -50,4 +51,11 @@ public class DisplayAccessor {
 
     //function would only work if the threads listen to an interrupt event;
     public static void killSceneThreads(){ threadList.forEach(Thread::interrupt);}
+
+    public static void setScreenSize(int width, int height){
+        SCREEN_HEIGHT = height;
+        SCREEN_WIDTH = width;
+        //displayManager.resizeScreen();
+    }
+
 }

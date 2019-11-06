@@ -319,14 +319,20 @@ public class DisplayManager {
                 try {summarizeVoteData();} catch(IOException ioe){ioe.printStackTrace();}
             if(sceneIndex == sceneList.size()-1) //fingerprint reading/voting scene
                 sceneFunction.castVote(trimScenesToElect(sceneList));
-            if(sceneIndex == sceneList.size())
-                sceneFunction.newVote();
+            if(sceneIndex == sceneList.size()) //return;//////////////////
+                sceneFunction.newVote(); //////////////////////////////////////remove this when card is implemented
         }
 
         switch(sceneIndex) {
             case DisplayAccessor.ANOTHER_NEW_VOTER_SCENE:
                 if(!inFinalScenes) break;
                 Thread scene1Thread = new Thread(()->{ try {
+                    /*
+                     * note that when the sceneFunction.fetchUserDetails returns false,
+                     * the program hangs and waits for the user to retract his/her card.
+                     * This retraction reloads the voter scene, serving as a loop in any
+                     * occurrence of error while fetchingUserDetails
+                     */
                     if(!sceneFunction.fetchUserDetails()) return; //loop till it returns true
                     Map<String, String> userDetails = sceneFunction.getUserDetailsMap();
                     initializeVoterScenes(sceneFunction.getElectionBundle(), userDetails);

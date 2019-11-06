@@ -46,6 +46,7 @@ public class SceneFunction {
 
 
     boolean fetchUserDetails() {
+
         //set visibility
         Platform.runLater(()->{
             DisplayAccessor.getCurrentScene().lookup("#retryButton").setVisible(false);
@@ -57,15 +58,19 @@ public class SceneFunction {
 
 
         //wait until card is inserted
-        try{Thread.sleep(2000);} catch(Exception e){e.printStackTrace();}
+        try{while(!Factory.isCardPresent()) continue; }
+        catch(IOException ioe){
+            ioe.printStackTrace();
+            userDetailError(Factory.CARD_READ_ERR); return false;
+        }
+        catch(Exception e){e.printStackTrace(); return  false;}
+
+
 
         Platform.runLater(() -> ((Label) DisplayAccessor.getCurrentScene().lookup("#prompt"))
                     .setText("fetching details..."));
 
         //read card
-        try{//Thread.sleep(2000);
-            while(!Factory.isCardPresent()) continue;
-        } catch(Exception e){e.printStackTrace();}//////////////////////////////won't need try catch block////////////////////////////////
         String voterId = Factory.readCard();
 
         //card is bad, invalid or rejected
@@ -115,6 +120,7 @@ public class SceneFunction {
 
     private void userDetailError(int cause){
         switch(cause){
+            case Factory.CARD_READ_ERR: //this is very unlikely and is cause by an error in running the external python card reader codes
             case Factory.INVALID_CARD:
                 Platform.runLater(()->{
                     ((Label) DisplayAccessor.getCurrentScene().lookup("#prompt"))
@@ -152,12 +158,14 @@ public class SceneFunction {
         try{Thread.sleep(1500);}catch(Exception e){e.printStackTrace();}
         switch(cause){
             case Factory.INVALID_CARD:
+            case Factory.CARD_READ_ERR:
             case Factory.INVALID_VOTER:
                 DisplayAccessor.getCurrentScene().lookup("#prompt")
                         .getStyleClass().remove("error-label");
                 int action = DisplayAccessor.inFinalScenes() ? DisplayAccessor.ANOTHER_NEW_VOTER_SCENE
                         : DisplayAccessor.NEW_VOTER_SCENE;
                 DisplayAccessor.invokeSceneFunction(action);
+                System.out.println("invoked "+action);//////////////////////////////////////////////////////////////////////////////
                 break;
             case Factory.FINGERPRINT_MISMATCH:
                 DisplayAccessor.getCurrentScene().lookup("#retry")
@@ -341,12 +349,16 @@ public class SceneFunction {
     //resets when card is removed
     private void runCardEjectListener(){
         new Thread(()->{
-            while(!Factory.isCardPresent()){
-                try{Thread.sleep(2000);}catch(Exception e){e.printStackTrace();}
-                DisplayAccessor.killSceneThreads();
-                int action = DisplayAccessor.inFinalScenes() ? DisplayAccessor.ANOTHER_NEW_VOTER_SCENE
-                        : DisplayAccessor.NEW_VOTER_SCENE;
-                DisplayAccessor.invokeSceneFunction(action);
+            try{
+                while(!Factory.isCardPresent()){
+                    try{Thread.sleep(2000);}catch(Exception e){e.printStackTrace();}
+                    DisplayAccessor.killSceneThreads();
+                    int action = DisplayAccessor.inFinalScenes() ? DisplayAccessor.ANOTHER_NEW_VOTER_SCENE
+                            : DisplayAccessor.NEW_VOTER_SCENE;
+                    DisplayAccessor.invokeSceneFunction(action);
+                }
+            }catch(IOException ioe){ //thrown by Factory.isCardPresent()
+                userDetailError(Factory.CARD_READ_ERR);
             }
         }, "Check For Card Thread").start();
     }

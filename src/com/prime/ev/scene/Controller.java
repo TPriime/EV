@@ -74,7 +74,7 @@ public class Controller {
         try {
             DisplayAccessor.killSceneThreads();//doesn't work yet
 
-            BufferedReader reader = new BufferedReader(new FileReader(new File("vote_log2.txt")));//Factory.VOTE_LOG_PATH)));
+            BufferedReader reader = new BufferedReader(new FileReader(new File("vote_log.txt-bak")));//Factory.VOTE_LOG_PATH)));
             List<String> voteLog = reader.lines().collect(Collectors.toList());
 
             try{

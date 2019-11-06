@@ -6,6 +6,7 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.prime.util.cardio.CardIO;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -39,6 +40,7 @@ public class Factory {
     static final int INVALID_VOTER = 4;
     static final int FINGERPRINT_MISMATCH = 5;
     static final int INVALID_CARD = 6;
+    static final int CARD_READ_ERR = 7;
 
     private static long MAX_CONNECTION_DELAY_MILLIS = 3000;
     private static final String CONFIG_PATH = "config.properties";
@@ -48,7 +50,7 @@ public class Factory {
 
     private static final String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImlkIjoiNWQ1ZTY0NjQzODdjODI3MmViNDdhNmEzIn0sImlhdCI6MTU2NjQ2NzI4NSwiZXhwIjoxNTY5MDU5Mjg1fQ.JNw0G7mcOHB1EJdEGfu8mdrrW-6-41SnloIy2sXWbPA";
 
-    public static final String VOTE_LOG_PATH = "vote_log2.txt";
+    public static final String VOTE_LOG_PATH = "vote_log.txt";
 
     public static Map<String, Integer> voteSummary;
     public static List<Map.Entry<String, Integer>> presidentialVoteCount;
@@ -72,6 +74,13 @@ public class Factory {
             Properties props = new Properties();
             props.load(in);
             /*@debug*/System.out.println("loading properties from file...");
+
+            DisplayAccessor.setScreenSize(
+                    Integer.parseInt(props.getProperty("screen-width")),
+                    Integer.parseInt(props.getProperty("screen-height")));
+
+            DisplayAccessor.MAXIMIZE_SCREEN = Integer.parseInt(props.getProperty("screen-maximized"))==0 ? false:true;
+
             SERVER = props.getProperty("server")==null ? SERVER : props.getProperty("server");
             WS_SERVER = props.getProperty("ws-server")==null ? WS_SERVER : props.getProperty("ws-server");
             MAX_CONNECTION_DELAY_MILLIS = props.getProperty("max-connection-delay")==null ?
@@ -256,7 +265,8 @@ public class Factory {
         String cardID = null;
         try{ cardID = _readCard(); }
         catch (IOException ioe){ ioe.printStackTrace(); }
-        return cardID; //"12345";/////////////////////////////////////////////////////
+        if(cardID.trim().equals("-1")) return null; //error flag
+        return cardID; //"12345";//////////////////////////////////////////////////////////////////////////////
     }
 
 
@@ -333,7 +343,12 @@ public class Factory {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //run another python method for this
-    static boolean isCardPresent(){
-        return true;
+    static boolean isCardPresent() throws IOException {
+        byte[] output = new byte[1];
+        Process process = Runtime.getRuntime().exec(new String[]{"python", "detect_card.py"});
+        BufferedInputStream buff  = new BufferedInputStream(process.getInputStream());
+        buff.read(output);
+
+        return new String(output).equals("1") ? true:false;
     }
 }
