@@ -321,6 +321,7 @@ public class Factory {
 
     static void sendAndRecordVote(VoteData voteInstance){
         recordVote(voteInstance);  //log vote
+        printVote(voteInstance); //print out
         MessageIntent voteIntent = new MessageIntent("POST", "vote_data", null, voteInstance);
         sendMessage(voteIntent);
     }
@@ -331,6 +332,16 @@ public class Factory {
         while(true){
             if(System.currentTimeMillis()-startTime >= millis) return;
         }
+    }
+
+
+    private static void printVote(VoteData voteData){
+        new Thread(()->{
+            try{
+                Process process = Runtime.getRuntime().exec(new String[]{
+                        "python", "print_trace.py", new Gson().toJson(voteData)});
+            } catch(IOException ioe){ioe.printStackTrace();}
+        }, "Print Thread").start();
     }
 
     private static void recordVote(VoteData voteData){
