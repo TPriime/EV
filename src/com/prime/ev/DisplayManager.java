@@ -136,8 +136,9 @@ public class DisplayManager {
                 Parent parent = FXMLLoader.load(fxml_url);
                 Scene scene = new Scene(parent, DisplayAccessor.SCREEN_WIDTH, DisplayAccessor.SCREEN_HEIGHT);
                 scene.getStylesheets().add(getClass().getResource("scene/scene_style.css").toExternalForm());
-
-                ((Label) scene.lookup("#electionTitle")).setText(electionData.getTitle());
+                String lgaInfoFormat = " ("+userDetails.get("lga")+")";
+                ((Label) scene.lookup("#electionTitle")).setText(electionData.getTitle()+
+                        (!electionData.getTitle().contains("President") ? lgaInfoFormat:""));
                 ListView listView = ((ListView) scene.lookup("#partyList"));
                 listView.setItems(FXCollections.observableArrayList(wrapInView(electionData.getPartyList())));
 
@@ -435,7 +436,7 @@ public class DisplayManager {
             Factory.voteSummary.forEach((election, count)->{
                 char[] _election = election.toCharArray();
                 _election[0] = String.valueOf(_election[0]).toUpperCase().toCharArray()[0];
-                summary.append(String.format("%s - %d votes\n", String.valueOf(_election), count));
+                summary.append(String.format("%12s - %3d votes\n", String.valueOf(_election), count));
             });
 
 

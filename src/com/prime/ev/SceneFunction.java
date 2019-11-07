@@ -272,7 +272,8 @@ public class SceneFunction {
                     Map<String, String> voteMap = new HashMap<>();
                     boolean isSelected = ((Parent) partyBox).lookup("#fingerPrintBox").isVisible();
                     if(isSelected){
-                        String electionTitle = ((Label)voteScene.lookup("#electionTitle")).getText();
+                        String electionTitle = ((Label)voteScene.lookup("#electionTitle")).getText()
+                                .replace("(", "#").split("#")[0]; //remove the bracket containing lga
                         String votedParty = ((Label)((Parent) partyBox).lookup("#party_name")).getText();
                         voteMap.put("election", electionTitle);
                         voteMap.put("electionCode", DisplayAccessor.getCurrentElectionCodeMap().get(electionTitle));
@@ -320,13 +321,13 @@ public class SceneFunction {
             }));
         */
 
-        String voteTime = new Date(System.currentTimeMillis()).toString();
+        String voteTime = new Date(System.currentTimeMillis()).toGMTString();
         Factory.sendAndRecordVote(
                 new VoteData(currentUserData.id, Factory.getProperty("device_id"), getVotes(voteScenes), voteTime));
 
         //new Thread(()->{
         try{Thread.sleep((long)(DisplayAccessor.getDelay()*1.8));}catch(Exception e){e.printStackTrace();}
-        DisplayAccessor.nextScene();//////////////////////////////////////////////////////////////////
+        DisplayAccessor.nextScene();//////////////////////////////////////////////////////
         //}).start();
     }
 

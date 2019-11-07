@@ -202,6 +202,7 @@ public class Factory {
         try{
             webSocket = connector.connect();
         } catch (WebSocketException wse){
+            System.out.println("error at Factory.createSocketConnection()");
             System.out.println(wse.getError()+" - "+wse.getMessage());
             return false;
         }

@@ -73,8 +73,7 @@ public class Controller {
     public void endElection(){
         try {
             DisplayAccessor.killSceneThreads();//try to interrupt, doesn't work yet
-////////////////////////////////////////////////////////////////////////////use Factory.VOTE_LOG_PATH//////////////////////////////////////////
-            BufferedReader reader = new BufferedReader(new FileReader(new File("vote_log.txt")));//Factory.VOTE_LOG_PATH)));
+            BufferedReader reader = new BufferedReader(new FileReader(new File(Factory.VOTE_LOG_PATH)));
             List<String> voteLog = reader.lines().collect(Collectors.toList());
 
             try{

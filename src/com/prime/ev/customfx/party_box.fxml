@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<StackPane fx:id="partyBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="700.0" style="-fx-background-color: #d5d5b6; -fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane fx:id="partyBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="700.0" style="-fx-background-color: #d5d5b6; -fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Pane>
          <children>
             <VBox alignment="CENTER" fillWidth="false" spacing="15.0" StackPane.alignment="CENTER">
                <children>
-                  <ImageView fx:id="party_logo" fitHeight="150.0" fitWidth="200.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="party_logo" fitHeight="90.0" fitWidth="90.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" VBox.vgrow="NEVER" />
                   <Label fx:id="party_name" alignment="CENTER" text="Label" />
                </children>
             </VBox>
@@ -21,11 +23,11 @@
       </Pane>
       <Group nodeOrientation="LEFT_TO_RIGHT" StackPane.alignment="CENTER_RIGHT">
          <children>
-            <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="140.0" prefWidth="120.0" style="-fx-border-width: 2; -fx-border-color: black;">
+            <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="90.0" style="-fx-border-width: 2; -fx-border-color: black;">
                <children>
-                  <ImageView fx:id="fingerPrintBox" fitHeight="136.0" fitWidth="116.0" pickOnBounds="true" preserveRatio="true" visible="false">
+                  <ImageView fx:id="fingerPrintBox" fitHeight="96.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true" visible="false" StackPane.alignment="CENTER">
                      <image>
-                        <Image url="@../../../../resources/fingerprint2.jpg" />
+                        <Image url="@../../../../resources/Fingerprint-Free-PNG-Image.png" />
                      </image>
                   </ImageView>
                </children>
