@@ -109,27 +109,37 @@ public class DisplayManager {
             }
         });
 
-        UserData usd = sceneFunction.getUserData();
-        ArrayList<Byte> imageByteList = (ArrayList<Byte>) usd.image.get("data");
-        byte[] imageBytes = new byte[imageByteList.size()];
-        Object[] bytes = imageByteList.toArray();
-        for(int i=0; i<imageByteList.size(); i++) { imageBytes[i] = (byte)(double)(Double)bytes[i]; }
 
-        InputStream i = new ByteArrayInputStream(imageBytes);
-        Image userImage = new Image(i);
+        Image userImage;
 
-        //compress
-        /*
-         * This should be done on the registration end instead
-         */
-        //try{
-        //    ImageCompressor.compress(ImageIO.read(i), new File("imtemp"), "jpg", 0.4f);
-        //    userImage = new Image(new FileInputStream("imtemp"));
-        //} catch(IOException ioe){
-        //    ioe.printStackTrace();
-        //    userImage = new Image(i);
-        //}
+        {
+            UserData usd = sceneFunction.getUserData();
+            ArrayList<Byte> imageByteList = (ArrayList<Byte>) usd.image.get("data");
+            byte[] imageBytes = new byte[imageByteList.size()];
+            Object[] bytes = imageByteList.toArray();
+            for (int i = 0; i < imageByteList.size(); i++) {
+                imageBytes[i] = (byte) (double) (Double) bytes[i];
+            }
 
+            InputStream i = new ByteArrayInputStream(imageBytes);
+
+
+            //compress
+            /*
+             * This should be done on the registration end instead
+             */
+            try {
+                ImageCompressor.compress(ImageIO.read(i), new File("imtemp"), "jpg", 0.4f);
+                userImage = new Image(new FileInputStream("imtemp"));
+                //if successful, clear waste data for raspi
+                imageByteList = null;
+                imageBytes = null;
+                bytes = null;
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+                userImage = new Image(i);
+            }
+        }
 
 
         ImageView imageView = (ImageView)scene4.lookup("#userImage");
