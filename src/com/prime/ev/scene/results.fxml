@@ -25,7 +25,7 @@
             <Font name="Monospaced Regular" size="15.0" />
          </font>
          <VBox.margin>
-            <Insets right="32.0" />
+            <Insets />
          </VBox.margin></Label>
    </children>
 </VBox>

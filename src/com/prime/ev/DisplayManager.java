@@ -1,9 +1,6 @@
 package com.prime.ev;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -22,8 +19,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+
+import javax.imageio.ImageIO;
 
 
 /**
@@ -118,6 +118,19 @@ public class DisplayManager {
         InputStream i = new ByteArrayInputStream(imageBytes);
         Image userImage = new Image(i);
 
+        //compress
+        /*
+         * This should be done on the registration end instead
+         */
+        //try{
+        //    ImageCompressor.compress(ImageIO.read(i), new File("imtemp"), "jpg", 0.4f);
+        //    userImage = new Image(new FileInputStream("imtemp"));
+        //} catch(IOException ioe){
+        //    ioe.printStackTrace();
+        //    userImage = new Image(i);
+        //}
+
+
 
         ImageView imageView = (ImageView)scene4.lookup("#userImage");
 
@@ -137,8 +150,12 @@ public class DisplayManager {
                 Scene scene = new Scene(parent, DisplayAccessor.SCREEN_WIDTH, DisplayAccessor.SCREEN_HEIGHT);
                 scene.getStylesheets().add(getClass().getResource("scene/scene_style.css").toExternalForm());
                 String lgaInfoFormat = " ("+userDetails.get("lga")+")";
+                String appendLga = "";
+                try{
+                    appendLga = !electionData.getTitle().contains("President") ? lgaInfoFormat:"";
+                }catch(NullPointerException npe){npe.printStackTrace();}
                 ((Label) scene.lookup("#electionTitle")).setText(electionData.getTitle()+
-                        (!electionData.getTitle().contains("President") ? lgaInfoFormat:""));
+                        appendLga);
                 ListView listView = ((ListView) scene.lookup("#partyList"));
                 listView.setItems(FXCollections.observableArrayList(wrapInView(electionData.getPartyList())));
 
@@ -340,7 +357,7 @@ public class DisplayManager {
                     DisplayAccessor.nextScene();
                 }
                 catch(Exception e){
-                    serverResponseError();
+                    fatalError();
                     e.printStackTrace();
                 }
                 }, "Scene1 - Fetch Voter Details");
@@ -358,8 +375,12 @@ public class DisplayManager {
                     inFinalScenes = true;
                     DisplayAccessor.nextScene();
                 }
+                catch(ArrayIndexOutOfBoundsException arrayException) {
+                    arrayException.printStackTrace();
+                    fatalError();
+                }
                 catch(Exception e){
-                    serverResponseError();
+                    System.out.println("Unknown error");
                     e.printStackTrace();
                 }
                 }, "Scene3 - Fetch Voter Details");
@@ -398,7 +419,6 @@ public class DisplayManager {
             Scene resultScene = new Scene(FXMLLoader.load(getClass().getResource("scene/results.fxml")));
             resultScene.getStylesheets().add(getClass().getResource("scene/scene_style.css").toExternalForm());
 
-            //String predentialVoteCount = Factory.presidentialVoteCount == null ? "no Presidential vote taken!":Factory.presidentialVoteCount.toString();
             StringBuilder presVoteCount = new StringBuilder();
             ArrayList<StackPane> sPanes = new ArrayList<>();
 
@@ -436,7 +456,7 @@ public class DisplayManager {
             Factory.voteSummary.forEach((election, count)->{
                 char[] _election = election.toCharArray();
                 _election[0] = String.valueOf(_election[0]).toUpperCase().toCharArray()[0];
-                summary.append(String.format("%12s - %3d votes\n", String.valueOf(_election), count));
+                summary.append(String.format("%-12s  %7d votes\n", String.valueOf(_election), count));
             });
 
 
@@ -449,10 +469,15 @@ public class DisplayManager {
     }
 
 
-    private void serverResponseError(){
+    private void fatalError(){
         Platform.runLater(()->{
-            ((Label) getCurrentScene().lookup("#prompt")).setText("Error occurred fetching election data");
-            getCurrentScene().lookup("#retryButton").setVisible(true);
+            ((Label) getCurrentScene().lookup("#prompt")).setText("fatal error, reboot device");
+            getCurrentScene().lookup("#prompt").setStyle("-fx-font-size: 25px");
+            //getCurrentScene().lookup("#prompt").setStyle("-fx-text-fill: red");
+
+            //irrecoverable error by calling next scene with out of bound array index,
+            // so no need for retry button
+            //getCurrentScene().lookup("#retryButton").setVisible(true);
         });
     }
 

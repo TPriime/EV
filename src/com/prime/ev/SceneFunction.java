@@ -70,6 +70,8 @@ public class SceneFunction {
         }
         catch(Exception e){e.printStackTrace(); return  false;}
 
+        //begin  card read loop
+        runCardEjectListener();
 
         Platform.runLater(() -> ((Label) DisplayAccessor.getCurrentScene().lookup("#prompt"))
                     .setText("fetching details..."));
@@ -83,8 +85,6 @@ public class SceneFunction {
             return false;
         }
 
-        //begin  card read loop
-        runCardEjectListener();
 
         //get server response
         String rawServerResponse = Factory.fetchUserData(voterId);  //long blocking operation
