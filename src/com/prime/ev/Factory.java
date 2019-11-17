@@ -28,8 +28,8 @@ public class Factory {
     private static boolean newMessage = false;
     private static long voteCount = 0;
     private static String serverResponse = "";
-    private static String SERVER = "http://192.168.8.100:8080";//http://127.0.0.1:8080";
-    private static String WS_SERVER = "ws://192.168.8.100:8080";//"ws://127.0.0.1:8080";
+    private static String SERVER = "http://127.0.0.1:8080";
+    private static String WS_SERVER = "ws://127.0.0.1:8080";
     //private static String ELECTION_DATA_API = SERVER + "/api/election_data";
     private static String ELECTION_DATA_API = SERVER + "/evoting_api/v1/elections/";
 
@@ -41,6 +41,7 @@ public class Factory {
     static final int FINGERPRINT_MISMATCH = 5;
     static final int INVALID_CARD = 6;
     static final int CARD_READ_ERR = 7;
+    static final int MULTIPLE_VOTE = 8;
 
     private static long MAX_CONNECTION_DELAY_MILLIS = 3000;
     private static final String CONFIG_PATH = "config.properties";
@@ -133,7 +134,7 @@ public class Factory {
             if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 response = new BufferedReader(new InputStreamReader(conn.getInputStream()))
                         .lines().collect(Collectors.joining());
-                System.out.println("server response:" + response);
+                /*@debug*///System.out.println("server response:" + response);
                 return response;
             }
             else if(conn.getResponseCode() != HttpURLConnection.HTTP_OK){
@@ -258,6 +259,7 @@ public class Factory {
         System.out.println("fetching user data");
         String response = awaitResponse(new MessageIntent("GET", "USER_DATA", null, voterId),
                 MAX_CONNECTION_DELAY_MILLIS);
+        /*@debug*///System.out.println(" response:  "+response);
         return response;
     }
 

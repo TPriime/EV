@@ -6,7 +6,7 @@
 }
 
 
-.list-cell:selected{
+.list-cell:selected {
     -fx-background-color: green;
 }
 
@@ -60,13 +60,13 @@
 }
 
 
-.error-label{
+.error-label {
     -fx-font-style: italic;
     -fx-font-weight: normal;
     -fx-text-fill: red;
 }
 
-.summary{
+.summary {
     -fx-font-family: monospaced;
     -fx-font-size: 30px;
     -fx-font-weight: bold;

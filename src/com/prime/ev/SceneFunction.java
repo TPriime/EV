@@ -95,14 +95,29 @@ public class SceneFunction {
 
         MessageIntent msi = new Gson().fromJson(rawServerResponse, MessageIntent.class);
 
+        if(msi.header.get("title").equalsIgnoreCase("USER_DATA_ERROR")){
+            userDetailError(Factory.INVALID_VOTER);
+            return false;
+        }
+
         //server returns "invalid voter"
         if(msi.header.get("title").equalsIgnoreCase("INVALID_VOTER")){
             userDetailError(Factory.INVALID_VOTER);
             return false;
         }
 
+        if(msi.header.get("title").equalsIgnoreCase("MULTIPLE_VOTE")){
+            userDetailError(Factory.MULTIPLE_VOTE);
+            return false;
+        }
+
         currentRawUserData = new Gson().toJson(msi.body);
         currentUserData = new Gson().fromJson(currentRawUserData, UserData.class);
+
+        if(currentUserData.name == null) {
+            userDetailError(Factory.MULTIPLE_VOTE);
+            return false;
+        }
 
         return true;
     }
@@ -140,6 +155,15 @@ public class SceneFunction {
                     DisplayAccessor.getCurrentScene().lookup("#prompt")
                             .getStyleClass().add("error-label");
                 }); break;
+
+            case Factory.MULTIPLE_VOTE:
+                Platform.runLater(()->{
+                    ((Label) DisplayAccessor.getCurrentScene().lookup("#prompt"))
+                            .setText("you can't vote more than once, retract!");
+                    DisplayAccessor.getCurrentScene().lookup("#prompt")
+                            .getStyleClass().add("error-label");
+                }); break;
+
 
             case Factory.FINGERPRINT_MISMATCH:
                 DisplayAccessor.getCurrentScene().lookup("#retry")
@@ -276,9 +300,13 @@ public class SceneFunction {
                                 .replace("(", "#").split("#")[0]; //remove the bracket containing lga
                         String votedParty = ((Label)((Parent) partyBox).lookup("#party_name")).getText();
                         voteMap.put("election", electionTitle);
-                        voteMap.put("electionCode", DisplayAccessor.getCurrentElectionCodeMap().get(electionTitle));
+
+                        voteMap.put("electionCode", DisplayAccessor.getCurrentElectionCodeMap().get(
+                                 electionTitle.replace("(", "#")
+                                                .split("#")[0].trim()));
                         voteMap.put("party", votedParty);
                         votes.add(voteMap);
+                        System.out.println(voteMap);
                     }
                 }));
         return votes;
@@ -340,7 +368,6 @@ public class SceneFunction {
          * the checkForCardLoop() will wait for a retraction and move to
          * the new voter scene
          */
-
 
 
         //wait for user to remove card to start new vote/////////////////////////////////////////////////
