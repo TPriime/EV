@@ -212,7 +212,7 @@ public class Factory {
         new Thread(()->{
             while(true) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(1500);
                     if (!webSocket.isOpen()) {
                         webSocket = connector.connect();
                     }

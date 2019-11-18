@@ -170,11 +170,9 @@ public class DisplayManager {
                 listView.setItems(FXCollections.observableArrayList(wrapInView(electionData.getPartyList())));
 
                 currentElectionCodeMap.put(electionData.getTitle(), electionData.getCode());
-                //System.out.println(currentElectionCodeMap); ///////////////////////////////////////////////////////// /////////
                 sceneList.add(scene);
                 ++numberOfVoterScenes;
             }
-            //System.out.println(currentElectionCodeMap); ///////////////////////////////////////////////////////////////////////////////
         }
         System.out.println("code map////////////////////////");
         System.out.println(currentElectionCodeMap);
