@@ -1,2 +1,2 @@
 # EV
-Electronic Voting
+Electronic Voting Device 
